@@ -55,9 +55,9 @@ public class UserController {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userRegisterRequest.getUserAccount();
-        String userPassword = userRegisterRequest.getUserPassword();
-        String checkPassword = userRegisterRequest.getCheckPassword();
+        String userAccount = userRegisterRequest.getUser_acct();
+        String userPassword = userRegisterRequest.getUser_pwd();
+        String checkPassword = userRegisterRequest.getUser_check_pwd();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
             return null;
         }
@@ -77,8 +77,8 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getUserAccount();
-        String userPassword = userLoginRequest.getUserPassword();
+        String userAccount = userLoginRequest.getUser_acct();
+        String userPassword = userLoginRequest.getUser_pwd();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
