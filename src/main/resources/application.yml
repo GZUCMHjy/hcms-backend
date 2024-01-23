@@ -90,3 +90,9 @@ cos:
     secretKey: xxx
     region: xxx
     bucket: xxx
+hcms:
+  alioss:
+    access-key-id: LTAI5t9nGY2YuMSQGD3sHDLQ
+    access-key-secret: sj3iYr4hzyEJ3MbSkJofN7gsPs9WUW
+    endpoint: oss-cn-guangzhou.aliyuncs.com
+    bucket-name: web-louis
