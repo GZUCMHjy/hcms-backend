@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.HcMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Hc">
+            <id property="hc_id" column="hc_id" jdbcType="INTEGER"/>
+            <result property="states" column="states" jdbcType="VARCHAR"/>
+            <result property="hc_name" column="hc_name" jdbcType="VARCHAR"/>
+            <result property="hc_formula" column="hc_formula" jdbcType="VARCHAR"/>
+            <result property="hc_remnant" column="hc_remnant" jdbcType="INTEGER"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="profile" column="profile" jdbcType="VARCHAR"/>
+            <result property="producationdate" column="producationdate" jdbcType="TIMESTAMP"/>
+            <result property="cas" column="cas" jdbcType="VARCHAR"/>
+            <result property="hctypt_id" column="hctypt_id" jdbcType="INTEGER"/>
+            <result property="shelflife" column="shelflife" jdbcType="INTEGER"/>
+            <result property="pur_id" column="pur_id" jdbcType="INTEGER"/>
+            <result property="borrowed" column="borrowed" jdbcType="TINYINT"/>
+            <result property="wh_id" column="wh_id" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hc_id,states,hc_name,
+        hc_formula,hc_remnant,price,
+        profile,producationdate,cas,
+        hctypt_id,shelflife,pur_id,
+        borrowed,wh_id,status,
+        createTime,updateTime,isDelete
+    </sql>
+</mapper>

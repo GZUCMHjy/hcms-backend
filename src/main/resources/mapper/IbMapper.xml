@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.IbMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Ib">
+            <id property="ib_id" column="ib_id" jdbcType="INTEGER"/>
+            <result property="whstart_id" column="whstart_id" jdbcType="INTEGER"/>
+            <result property="whend_id" column="whend_id" jdbcType="INTEGER"/>
+            <result property="teacher_id" column="teacher_id" jdbcType="INTEGER"/>
+            <result property="admina_id" column="admina_id" jdbcType="INTEGER"/>
+            <result property="adminb_id" column="adminb_id" jdbcType="INTEGER"/>
+            <result property="user_id" column="user_id" jdbcType="INTEGER"/>
+            <result property="hctype_id" column="hctype_id" jdbcType="INTEGER"/>
+            <result property="ib_time" column="ib_time" jdbcType="TIMESTAMP"/>
+            <result property="ib_nums" column="ib_nums" jdbcType="INTEGER"/>
+            <result property="ib_quantity" column="ib_quantity" jdbcType="VARCHAR"/>
+            <result property="wh_remnant" column="wh_remnant" jdbcType="VARCHAR"/>
+            <result property="ib_content" column="ib_content" jdbcType="VARCHAR"/>
+            <result property="ib_purpose" column="ib_purpose" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updataTime" column="updataTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ib_id,whstart_id,whend_id,
+        teacher_id,admina_id,adminb_id,
+        user_id,hctype_id,ib_time,
+        ib_nums,ib_quantity,wh_remnant,
+        ib_content,ib_purpose,createTime,
+        updataTime,isDelete
+    </sql>
+</mapper>

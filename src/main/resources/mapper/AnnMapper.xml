@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.AnnMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Ann">
+            <id property="ann_id" column="ann_id" jdbcType="INTEGER"/>
+            <result property="admin_name" column="admin_name" jdbcType="VARCHAR"/>
+            <result property="admin_id" column="admin_id" jdbcType="INTEGER"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="publishdate" column="publishdate" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ann_id,admin_name,admin_id,
+        content,publishdate,createTime,
+        updateTime,isDelete
+    </sql>
+</mapper>

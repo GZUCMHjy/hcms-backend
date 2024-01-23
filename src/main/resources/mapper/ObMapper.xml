@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.ObMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Ob">
+            <id property="ob_id" column="ob_id" jdbcType="INTEGER"/>
+            <result property="whstart_id" column="whstart_id" jdbcType="INTEGER"/>
+            <result property="whend_id" column="whend_id" jdbcType="INTEGER"/>
+            <result property="teacher_id" column="teacher_id" jdbcType="INTEGER"/>
+            <result property="admina_id" column="admina_id" jdbcType="INTEGER"/>
+            <result property="adminb_id" column="adminb_id" jdbcType="INTEGER"/>
+            <result property="user_id" column="user_id" jdbcType="INTEGER"/>
+            <result property="hctype_id" column="hctype_id" jdbcType="INTEGER"/>
+            <result property="ob_time" column="ob_time" jdbcType="TIMESTAMP"/>
+            <result property="ob_nums" column="ob_nums" jdbcType="INTEGER"/>
+            <result property="ob_quantity" column="ob_quantity" jdbcType="VARCHAR"/>
+            <result property="wh_remnant" column="wh_remnant" jdbcType="VARCHAR"/>
+            <result property="ob_content" column="ob_content" jdbcType="VARCHAR"/>
+            <result property="ranout" column="ranout" jdbcType="TINYINT"/>
+            <result property="ob_purpose" column="ob_purpose" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updataTime" column="updataTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ob_id,whstart_id,whend_id,
+        teacher_id,admina_id,adminb_id,
+        user_id,hctype_id,ob_time,
+        ob_nums,ob_quantity,wh_remnant,
+        ob_content,ranout,ob_purpose,
+        createTime,updataTime,isDelete
+    </sql>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.User">
+            <id property="user_id" column="user_id" jdbcType="INTEGER"/>
+            <result property="user_name" column="user_name" jdbcType="VARCHAR"/>
+            <result property="user_gender" column="user_gender" jdbcType="VARCHAR"/>
+            <result property="user_position" column="user_position" jdbcType="VARCHAR"/>
+            <result property="user_institution" column="user_institution" jdbcType="VARCHAR"/>
+            <result property="lab_id" column="lab_id" jdbcType="INTEGER"/>
+            <result property="user_tel" column="user_tel" jdbcType="VARCHAR"/>
+            <result property="user_acct" column="user_acct" jdbcType="VARCHAR"/>
+            <result property="user_pwd" column="user_pwd" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,user_name,user_gender,
+        user_position,user_institution,lab_id,
+        user_tel,user_acct,user_pwd,
+        createTime,updateTime,isDelete
+    </sql>
+</mapper>

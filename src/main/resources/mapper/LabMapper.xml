@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.LabMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Lab">
+            <id property="lab_id" column="lab_id" jdbcType="INTEGER"/>
+            <result property="lab_name" column="lab_name" jdbcType="VARCHAR"/>
+            <result property="wh_id" column="wh_id" jdbcType="INTEGER"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        lab_id,lab_name,wh_id,
+        createTime,updateTime,isDelete
+    </sql>
+</mapper>

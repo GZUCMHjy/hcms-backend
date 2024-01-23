@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.HcobMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Hcob">
+            <id property="hcob_id" column="hcob_id" jdbcType="INTEGER"/>
+            <result property="hc_id" column="hc_id" jdbcType="INTEGER"/>
+            <result property="hctype_id" column="hctype_id" jdbcType="INTEGER"/>
+            <result property="ob_id" column="ob_id" jdbcType="INTEGER"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hcob_id,hc_id,hctype_id,
+        ob_id,createTime,updateTime,
+        isDelete
+    </sql>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louis.springbootinit.mapper.ApplyMapper">
+
+    <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Apply">
+            <id property="apply_id" column="apply_id" jdbcType="INTEGER"/>
+            <result property="hctype_list" column="hctype_list" jdbcType="VARCHAR"/>
+            <result property="user_name" column="user_name" jdbcType="VARCHAR"/>
+            <result property="user_tel" column="user_tel" jdbcType="VARCHAR"/>
+            <result property="apply_content" column="apply_content" jdbcType="VARCHAR"/>
+            <result property="apply_purpost" column="apply_purpost" jdbcType="VARCHAR"/>
+            <result property="resvdate" column="resvdate" jdbcType="TIMESTAMP"/>
+            <result property="apply_type" column="apply_type" jdbcType="INTEGER"/>
+            <result property="apply_status" column="apply_status" jdbcType="VARCHAR"/>
+            <result property="apply_reason" column="apply_reason" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        apply_id,hctype_list,user_name,
+        user_tel,apply_content,apply_purpost,
+        resvdate,apply_type,apply_status,
+        apply_reason,createTime,updateTime,
+        isDelete
+    </sql>
+</mapper>
