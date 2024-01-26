@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 */
 public interface AdminService extends IService<Admin> {
 
-    long adminRegister(String adminAccount, String adminPassword, String checkPassword);
-
     LoginAdminVO adminLogin(String adminAccount, String adminPassword, HttpServletRequest request);
 
     boolean adminLogout(HttpServletRequest request);

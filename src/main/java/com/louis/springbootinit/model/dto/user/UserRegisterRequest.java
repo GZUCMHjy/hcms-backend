@@ -13,10 +13,17 @@ import lombok.Data;
 public class UserRegisterRequest implements Serializable {
 
     private static final long serialVersionUID = 3191241716373120793L;
-    private String user_acct;
-
+    // 用户名
+    private String user_name;
+    // 用户电话
+    private String user_tel;
+    // 用户密码
     private String user_pwd;
-
-    private String user_check_pwd;
+    // 用户确认密码
+    private String check_pwd;
+    // 用户性别
+    private String user_gender;
+    // 用户工作单位
+    private String user_institution;
 
 }

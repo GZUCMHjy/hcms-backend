@@ -11,27 +11,41 @@ import java.io.Serializable;
  */
 @Data
 public class AdminUpdateMyRequest implements Serializable {
+
     /**
-     * 管理员姓名
+     * 用户姓名
      */
     private String admin_name;
-
-    /**
-     * 管理员性别
-     */
-    private String admin_gender;
-
-
-    /**
-     * 管理员工作单位
-     */
-    private String admin_institution;
-
 
     /**
      * 电话号码
      */
     private String admin_tel;
+
+    /**
+     * 用户密码
+     */
+    private String admin_pwd;
+
+    /**
+     * 用户性别
+     */
+    private String admin_gender;
+
+    /**
+     * 仓库名
+     */
+    private String warehouse_name;
+
+    /**
+     * 用户职位
+     */
+    private String admin_position;
+
+    /**
+     * 用户工作单位
+     */
+    private String admin_institution;
 
 
     private static final long serialVersionUID = 1L;

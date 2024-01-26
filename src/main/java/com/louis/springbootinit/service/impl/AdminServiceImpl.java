@@ -34,43 +34,6 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
      */
     private static final String SALT = "hcms";
 
-    @Override
-    public long adminRegister(String adminAccount, String adminPassword, String checkPassword) {
-        // 1. 校验
-        if (StringUtils.isAnyBlank(adminAccount, adminPassword, checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (adminAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
-        }
-        if (adminPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
-        }
-        // 密码和校验密码相同
-        if (!adminPassword.equals(checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
-        }
-        synchronized (adminAccount.intern()) {
-            // 账户不能重复
-            QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("adminAccount", adminAccount);
-            long count = this.baseMapper.selectCount(queryWrapper);
-            if (count > 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
-            }
-            // 2. 加密
-            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + adminPassword).getBytes());
-            // 3. 插入数据
-            Admin admin = new Admin();
-            admin.setAdmin_acct(adminAccount);
-            admin.setAdmin_pwd(adminPassword);
-            boolean saveResult = this.save(admin);
-            if (!saveResult) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
-            }
-            return admin.getAdmin_id();
-        }
-    }
 
     @Override
     public LoginAdminVO adminLogin(String adminAccount, String adminPassword, HttpServletRequest request) {
@@ -103,7 +66,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
 
     @Override
     public boolean adminLogout(HttpServletRequest request) {
-        return false;
+        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
+        }
+        // 移除登录态
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return true;
     }
 
     @Override

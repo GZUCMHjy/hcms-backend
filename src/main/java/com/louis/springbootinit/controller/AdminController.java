@@ -1,5 +1,6 @@
 package com.louis.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.louis.springbootinit.common.BaseResponse;
 import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.common.ResultUtils;
@@ -10,11 +11,10 @@ import com.louis.springbootinit.model.dto.admin.AdminLoginRequest;
 import com.louis.springbootinit.model.dto.admin.AdminRegisterRequest;
 import com.louis.springbootinit.model.dto.admin.AdminUpdateMyRequest;
 import com.louis.springbootinit.model.entity.Admin;
-import com.louis.springbootinit.model.entity.User;
+import com.louis.springbootinit.model.entity.Wh;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
-import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.service.AdminService;
-import com.louis.springbootinit.service.UserService;
+import com.louis.springbootinit.service.WhService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,30 +38,13 @@ public class AdminController {
     private AdminService adminService;
 
     @Resource
+    private WhService whService;
+
+    @Resource
     private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
 
-    /**
-     * 用户注册
-     *
-     * @param adminRegisterRequest
-     * @return
-     */
-    @PostMapping("/register")
-    public BaseResponse<Long> adminRegister(@RequestBody AdminRegisterRequest adminRegisterRequest) {
-        if (adminRegisterRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        String adminAccount = adminRegisterRequest.getAdmin_acct();
-        String adminPassword = adminRegisterRequest.getAdmin_pwd();
-        String checkPassword = adminRegisterRequest.getAdmin_check_pwd();
-        if (StringUtils.isAnyBlank(adminAccount, adminPassword, checkPassword)) {
-            return null;
-        }
-        long result = adminService.adminRegister(adminAccount, adminPassword, checkPassword);
-        return ResultUtils.success(result);
-    }
 
     /**
      * 用户登录
@@ -124,8 +107,12 @@ public class AdminController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Admin loginAdmin = adminService.getLoginAdmin(request);
+        QueryWrapper<Wh> whQueryWrapper = new QueryWrapper<>();
+        whQueryWrapper.eq("wh_name", adminUpdateMyRequest.getWarehouse_name());
+        Integer wh_id = whService.getOne(whQueryWrapper).getWh_id();
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminUpdateMyRequest, admin);
+        admin.setWarehouse_id(wh_id);
         admin.setAdmin_id(loginAdmin.getAdmin_id());
         boolean result = adminService.updateById(admin);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);

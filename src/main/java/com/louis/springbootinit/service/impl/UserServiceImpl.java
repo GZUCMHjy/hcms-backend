@@ -34,34 +34,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "hcms";
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String user_pwd, String check_pwd,String user_institution,String user_tel,String user_gender,String user_name) {
         // 1. 校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        if (StringUtils.isAnyBlank(user_pwd, check_pwd,user_tel,user_institution,user_name)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+        if(user_tel.length() != 11){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号码错误");
         }
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+        if (user_name.length() > 30) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名过长");
+        }
+        if (user_pwd.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
-        if (!userPassword.equals(checkPassword)) {
+        if (!user_pwd.equals(check_pwd)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
-        synchronized (userAccount.intern()) {
+        synchronized (user_tel.intern()) {
             // 账户不能重复
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("userAccount", userAccount);
+            queryWrapper.eq("user_tel", user_tel);
             long count = this.baseMapper.selectCount(queryWrapper);
             if (count > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             // 2. 加密
-            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + user_pwd).getBytes());
             // 3. 插入数据
             User user = new User();
-            user.setUser_acct(userAccount);
+            user.setUser_tel(user_tel);
+            user.setUser_acct(user_tel);
             user.setUser_pwd(encryptPassword);
             boolean saveResult = this.save(user);
             if (!saveResult) {
@@ -77,8 +81,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度过短");
+        if (userAccount.length() != 11) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
         }
         if (userPassword.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过短");

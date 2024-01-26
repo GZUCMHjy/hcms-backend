@@ -10,6 +10,7 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.UserMapper;
+import com.louis.springbootinit.model.entity.Lab;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.common.ResultUtils;
 import com.louis.springbootinit.exception.BusinessException;
@@ -23,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.louis.springbootinit.service.LabService;
 import com.louis.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +60,9 @@ public class UserController {
     private UserMapper userMapper;
 
     @Resource
+    private LabService labService;
+
+    @Resource
     private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
@@ -73,13 +78,17 @@ public class UserController {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userRegisterRequest.getUser_acct();
-        String userPassword = userRegisterRequest.getUser_pwd();
-        String checkPassword = userRegisterRequest.getUser_check_pwd();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        String user_name = userRegisterRequest.getUser_name();
+        String user_pwd = userRegisterRequest.getUser_pwd();
+        String check_pwd = userRegisterRequest.getCheck_pwd();
+        String user_institution = userRegisterRequest.getUser_institution();
+        String user_tel = userRegisterRequest.getUser_tel();
+        String user_gender = userRegisterRequest.getUser_gender();
+        // 校验判空
+        if (StringUtils.isAnyBlank(user_pwd, check_pwd,user_institution,user_tel,user_name)) {
             return null;
         }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        long result = userService.userRegister(user_pwd,check_pwd,user_institution,user_tel,user_gender,user_name);
         return ResultUtils.success(result);
     }
 
@@ -95,12 +104,12 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getUser_acct();
-        String userPassword = userLoginRequest.getUser_pwd();
-        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+        String user_acct = userLoginRequest.getUser_acct();
+        String user_pwd = userLoginRequest.getUser_pwd();
+        if (StringUtils.isAnyBlank(user_acct, user_pwd)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+        LoginUserVO loginUserVO = userService.userLogin(user_acct, user_pwd, request);
         return ResultUtils.success(loginUserVO);
     }
 
@@ -146,7 +155,12 @@ public class UserController {
         User loginUser = userService.getLoginUser(request);
         User user = new User();
         BeanUtils.copyProperties(userUpdateMyRequest, user);
+        String lab_name = userUpdateMyRequest.getLab_name();
+        QueryWrapper<Lab> labQueryWrapper = new QueryWrapper<>();
+        labQueryWrapper.eq("lab_name",lab_name);
+        Integer lab_id = labService.getOne(labQueryWrapper).getLab_id();
         user.setUser_id(loginUser.getUser_id());
+        user.setLab_id(lab_id);
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
