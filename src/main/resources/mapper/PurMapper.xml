@@ -7,11 +7,15 @@
     <resultMap id="BaseResultMap" type="com.louis.springbootinit.model.entity.Pur">
             <id property="pur_id" column="pur_id" jdbcType="INTEGER"/>
             <result property="user_id" column="user_id" jdbcType="INTEGER"/>
-            <result property="hctype_list" column="hctype_list" jdbcType="VARCHAR"/>
+<!--            <result property="hctype_list" column="hctype_list" jdbcType="VARCHAR"/>-->
+            <result property="hctype_list"
+                column="hctype_list"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="totalprice" column="totalprice" jdbcType="DECIMAL"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+            <result property="file" column="file" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">

@@ -15,6 +15,7 @@ import com.louis.springbootinit.model.entity.Wh;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
 import com.louis.springbootinit.service.AdminService;
 import com.louis.springbootinit.service.WhService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 用户接口
+ * 管理员接口
  *
  * @author louis
  * @from 
@@ -47,13 +48,14 @@ public class AdminController {
 
 
     /**
-     * 用户登录
+     * 管理员登录
      *
      * @param adminLoginRequest
      * @param request
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation(value = "管理员登录",notes = "管理员登录")
     public BaseResponse<LoginAdminVO> adminLogin(@RequestBody AdminLoginRequest adminLoginRequest, HttpServletRequest request) {
         if (adminLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -68,12 +70,13 @@ public class AdminController {
     }
 
     /**
-     * 用户注销
+     * 管理员注销
      *
      * @param request
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation(value = "管理员注销",notes = "管理员注销")
     public BaseResponse<Boolean> adminLogout(HttpServletRequest request) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -83,12 +86,13 @@ public class AdminController {
     }
 
     /**
-     * 获取当前登录用户
+     * 获取当前登录管理员
      *
      * @param request
      * @return
      */
     @GetMapping("/get/login")
+    @ApiOperation(value = "获取当前管理员登录",notes = "获取当前管理员登录")
     public BaseResponse<LoginAdminVO> getLoginAdmin(HttpServletRequest request) {
         Admin admin = adminService.getLoginAdmin(request);
         return ResultUtils.success(adminService.getLoginAdminVO(admin));
@@ -101,6 +105,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/update/my")
+    @ApiOperation(value = "更新个人信息",notes = "更新个人信息")
     public BaseResponse<Boolean> updateMyUser(@RequestBody AdminUpdateMyRequest adminUpdateMyRequest,
                                               HttpServletRequest request) {
         if (adminUpdateMyRequest == null) {
@@ -121,8 +126,10 @@ public class AdminController {
 
 
 
+
+
 //    /**
-//     * 分页获取用户封装列表
+//     * 分页获取管理员封装列表
 //     *
 //     * @param adminQueryRequest
 //     * @param request
@@ -148,7 +155,7 @@ public class AdminController {
 
 //
 //    /**
-//     * 用户登录（微信开放平台）
+//     * 管理员登录（微信开放平台）
 //     */
 //    @GetMapping("/login/wx_open")
 //    public BaseResponse<LoginUserVO> adminLoginByWxOpen(HttpServletRequest request, HttpServletResponse response,

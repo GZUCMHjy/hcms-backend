@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.louis.springbootinit.service.UserService;
 import com.louis.springbootinit.utils.AliOssUtil;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class FileController {
     @Resource
     private AliOssUtil aliOssUtil;
     @PostMapping("/upload")
+    @ApiOperation(value = "上传文件", notes = "上传文件")
     //请求中要携带上需要上传的文件
     public BaseResponse<String> saveOss(@RequestParam("file") MultipartFile file) throws Exception {
         if (file.isEmpty()) {
@@ -48,5 +50,4 @@ public class FileController {
             throw new RuntimeException(e);
         }
     }
-
 }

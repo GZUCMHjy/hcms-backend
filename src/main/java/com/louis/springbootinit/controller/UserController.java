@@ -10,6 +10,8 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.UserMapper;
+import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
+import com.louis.springbootinit.model.dto.purchase.PurchasePostRequest;
 import com.louis.springbootinit.model.entity.Lab;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.common.ResultUtils;
@@ -25,7 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.louis.springbootinit.service.LabService;
+import com.louis.springbootinit.service.PurService;
 import com.louis.springbootinit.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +68,9 @@ public class UserController {
     private LabService labService;
 
     @Resource
+    private PurService purService;
+
+    @Resource
     private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
@@ -74,6 +82,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
+    @ApiOperation(value = "用户注册",notes = "用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -100,6 +109,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation(value = "用户登录",notes = "用户登录")
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -120,6 +130,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation(value = "用户注销",notes = "用户注销")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -135,6 +146,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/get/login")
+    @ApiOperation(value = "获取当前登录用户",notes = "用户登录")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
@@ -147,6 +159,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update/my")
+    @ApiOperation(value = "更新个人信息",notes = "更新个人信息")
     public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
@@ -166,7 +179,8 @@ public class UserController {
         return ResultUtils.success(true);
     }
 
-    @GetMapping("export-xls")
+    @GetMapping("/export-xls")
+    @ApiOperation(value = "导出Excel", notes = "导出Excel")
     public void exportExcel(HttpServletResponse response) throws ClassNotFoundException, IOException {
         ExcelWriter writer = ExcelUtil.getWriter();
         List<User> employees = userMapper.selectList(new QueryWrapper<User>());
@@ -217,6 +231,45 @@ public class UserController {
         writer.close();
         IoUtil.close(out);
     }
+
+    /**
+     * 提交采购单
+     * @param purchasePostRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/postPurchase")
+    @ApiOperation(value = "提交采购单",notes = "提交采购单")
+    public BaseResponse<Boolean> postPurchase(@RequestBody PurchasePostRequest purchasePostRequest,HttpServletRequest request){
+        User loginUser = userService.getLoginUser(request);
+        if(loginUser == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户未登录");
+        }
+        if(purchasePostRequest == null || purchasePostRequest.getHctypeRecords().size() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"采购表不能为空");
+        }
+        List<HctypeRecord> hcTypes = purchasePostRequest.getHctypeRecords();
+        // 检验每一条采购的危化品的数量、单价、规格和品名是否为空
+        for(HctypeRecord hcRecord : hcTypes){
+            String hctype_spec = hcRecord.getHctype_spec();
+            String hctype_name = hcRecord.getHctype_name();
+            Integer count = hcRecord.getCount();
+            BigDecimal price = hcRecord.getPrice();
+            if(StringUtils.isAnyBlank(count.toString(),price.toString(),hctype_spec,hctype_name)){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"采购危化品类型不能为空");
+            }
+        }
+        if(hcTypes.size() > 5){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"采购数量不能超过5个");
+        }
+        Integer loginUserId = loginUser.getUser_id();
+        Boolean aBoolean = purService.addPurchase(loginUserId, purchasePostRequest);
+        if(!aBoolean){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"添加采购失败");
+        }
+        return ResultUtils.success(true);
+    }
+
 
 //    /**
 //     * 分页获取用户封装列表
