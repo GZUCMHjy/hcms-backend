@@ -10,7 +10,7 @@
             <result property="admin_gender" column="admin_gender" jdbcType="VARCHAR"/>
             <result property="admin_position" column="admin_position" jdbcType="VARCHAR"/>
             <result property="admin_institution" column="admin_institution" jdbcType="VARCHAR"/>
-            <result property="warehouse_id" column="warehouse_id" jdbcType="INTEGER"/>
+            <result property="wh_id" column="wh_id" jdbcType="INTEGER"/>
             <result property="admin_tel" column="admin_tel" jdbcType="VARCHAR"/>
             <result property="admin_acct" column="admin_acct" jdbcType="VARCHAR"/>
             <result property="admin_pwd" column="admin_pwd" jdbcType="VARCHAR"/>
@@ -21,7 +21,7 @@
 
     <sql id="Base_Column_List">
         admin_id,admin_name,admin_gender,
-        admin_position,admin_institution,warehouse_id,
+        admin_position,admin_institution,wh_id,
         admin_tel,admin_acct,admin_pwd,
         createTime,updateTime,isDelete
     </sql>

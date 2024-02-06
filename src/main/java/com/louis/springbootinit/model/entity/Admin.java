@@ -42,7 +42,7 @@ public class Admin implements Serializable {
     /**
      * 管理员管理仓库id,外键
      */
-    private Integer warehouse_id;
+    private Integer wh_id;
 
     /**
      * 管理员电话
@@ -95,13 +95,13 @@ public class Admin implements Serializable {
             && (this.getAdmin_gender() == null ? other.getAdmin_gender() == null : this.getAdmin_gender().equals(other.getAdmin_gender()))
             && (this.getAdmin_position() == null ? other.getAdmin_position() == null : this.getAdmin_position().equals(other.getAdmin_position()))
             && (this.getAdmin_institution() == null ? other.getAdmin_institution() == null : this.getAdmin_institution().equals(other.getAdmin_institution()))
-            && (this.getWarehouse_id() == null ? other.getWarehouse_id() == null : this.getWarehouse_id().equals(other.getWarehouse_id()))
+            && (this.getWh_id() == null ? other.getWh_id() == null : this.getWh_id().equals(other.getWh_id())
             && (this.getAdmin_tel() == null ? other.getAdmin_tel() == null : this.getAdmin_tel().equals(other.getAdmin_tel()))
             && (this.getAdmin_acct() == null ? other.getAdmin_acct() == null : this.getAdmin_acct().equals(other.getAdmin_acct()))
             && (this.getAdmin_pwd() == null ? other.getAdmin_pwd() == null : this.getAdmin_pwd().equals(other.getAdmin_pwd()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()));
+            && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete())));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class Admin implements Serializable {
         result = prime * result + ((getAdmin_gender() == null) ? 0 : getAdmin_gender().hashCode());
         result = prime * result + ((getAdmin_position() == null) ? 0 : getAdmin_position().hashCode());
         result = prime * result + ((getAdmin_institution() == null) ? 0 : getAdmin_institution().hashCode());
-        result = prime * result + ((getWarehouse_id() == null) ? 0 : getWarehouse_id().hashCode());
+        result = prime * result + ((getWh_id() == null) ? 0 : getWh_id().hashCode());
         result = prime * result + ((getAdmin_tel() == null) ? 0 : getAdmin_tel().hashCode());
         result = prime * result + ((getAdmin_acct() == null) ? 0 : getAdmin_acct().hashCode());
         result = prime * result + ((getAdmin_pwd() == null) ? 0 : getAdmin_pwd().hashCode());
@@ -134,7 +134,7 @@ public class Admin implements Serializable {
         sb.append(", admin_gender=").append(admin_gender);
         sb.append(", admin_position=").append(admin_position);
         sb.append(", admin_institution=").append(admin_institution);
-        sb.append(", warehouse_id=").append(warehouse_id);
+        sb.append(", warehouse_id=").append(wh_id);
         sb.append(", admin_tel=").append(admin_tel);
         sb.append(", admin_acct=").append(admin_acct);
         sb.append(", admin_pwd=").append(admin_pwd);

@@ -13,37 +13,14 @@ import lombok.Data;
 @Data
 public class LoginUserVO implements Serializable {
 
-    /**
-     * 用户姓名
-     */
-    private String user_name;
 
     /**
-     * 用户性别
+     * 登录状态
+     * -1 密码错误
+     * 0 账号不存在
+     * 1 登录成功
      */
-    private String user_gender;
-
-    /**
-     * 用户职位
-     */
-    private String user_position;
-
-    /**
-     * 用户工作单位
-     */
-    private String user_institution;
-
-    /**
-     * 所属实验室名
-     */
-    private String lab_name;
-
-    /**
-     * 电话号码
-     */
-    private String user_tel;
-
-
+    private Integer status;
 
     private static final long serialVersionUID = 1L;
 }

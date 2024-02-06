@@ -8,6 +8,7 @@ import com.louis.springbootinit.model.vo.LoginAdminVO;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author 35064
@@ -23,4 +24,8 @@ public interface AdminService extends IService<Admin> {
     Admin getLoginAdmin(HttpServletRequest request);
 
     LoginAdminVO getLoginAdminVO(Admin admin);
+
+    List<Admin> searchByAdminName(String teacher_name);
+
+    Admin searchByNameAndTel(String realName, String realTel);
 }

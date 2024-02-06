@@ -14,7 +14,7 @@
             <result property="profile" column="profile" jdbcType="VARCHAR"/>
             <result property="producationdate" column="producationdate" jdbcType="TIMESTAMP"/>
             <result property="cas" column="cas" jdbcType="VARCHAR"/>
-            <result property="hctypt_id" column="hctypt_id" jdbcType="INTEGER"/>
+            <result property="hctype_id" column="hctypt_id" jdbcType="INTEGER"/>
             <result property="shelflife" column="shelflife" jdbcType="INTEGER"/>
             <result property="pur_id" column="pur_id" jdbcType="INTEGER"/>
             <result property="borrowed" column="borrowed" jdbcType="TINYINT"/>
@@ -23,14 +23,15 @@
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="hc_enname" column="hc_enname" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         hc_id,states,hc_name,
         hc_formula,hc_remnant,price,
         profile,producationdate,cas,
-        hctypt_id,shelflife,pur_id,
+        hctype_id,shelflife,pur_id,
         borrowed,wh_id,status,
-        createTime,updateTime,isDelete
+        createTime,updateTime,isDelete,hc_enname
     </sql>
 </mapper>

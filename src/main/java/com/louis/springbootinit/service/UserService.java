@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author 35064
@@ -22,4 +23,8 @@ public interface UserService extends IService<User> {
     User getLoginUser(HttpServletRequest request);
 
     LoginUserVO getLoginUserVO(User user);
+
+    List<User> searchByUsername(String user_name);
+
+    User searchByNameAndTel(String userRealName, String userRealTel);
 }

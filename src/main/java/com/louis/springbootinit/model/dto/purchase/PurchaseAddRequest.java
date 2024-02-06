@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2024/1/26 20:06
  */
 @Data
-public class PurchasePostRequest implements Serializable {
+public class PurchaseAddRequest implements Serializable {
 
     private static final long serialVersionUID = -5444344182851159291L;
     /**

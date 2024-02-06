@@ -1,12 +1,13 @@
 package com.louis.springbootinit.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.mapper.PurMapper;
 import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
-import com.louis.springbootinit.model.dto.purchase.PurchasePostRequest;
+import com.louis.springbootinit.model.dto.purchase.PurchaseAddRequest;
 import com.louis.springbootinit.model.entity.Pur;
 import com.louis.springbootinit.service.PurService;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +39,7 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
      */
     @Override
     @Transactional
-    public Boolean addPurchase(Integer userId, PurchasePostRequest purchasePostRequest) {
+    public Boolean addPurchase(Integer userId, PurchaseAddRequest purchasePostRequest) {
         Pur pur = new Pur();
         // 采购人id
         pur.setUser_id(userId);
@@ -63,17 +65,35 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
         pur.setHctypeRecord_list(hctypeRecord_list);
         pur.setTotalprice(totolp);
         pur.setFile(purchasePostRequest.getFile());
+        pur.setCreateTime(new Date(System.currentTimeMillis()));
+        pur.setUpdateTime(new Date(System.currentTimeMillis()));
         // 插入数据
         int success = purMapper.insert(pur);
         if(success == 0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"提交采购失败");
         }
+        // 更新危化品表
+
         return Boolean.TRUE;
     }
     @Override
     public Boolean addPurchaseTest(Pur pur) {
         purMapper.insert(pur);
         return Boolean.TRUE;
+    }
+
+    @Override
+    public Pur searchByUserId(Integer user_id) {
+        if(user_id == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+        }
+        QueryWrapper<Pur> purQueryWrapper = new QueryWrapper<>();
+        purQueryWrapper.eq("user_id",user_id);
+        Pur targetPur = purMapper.selectOne(purQueryWrapper);
+        if(targetPur == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"未找到该用户对应的采购单");
+        }
+        return targetPur;
     }
 }
 

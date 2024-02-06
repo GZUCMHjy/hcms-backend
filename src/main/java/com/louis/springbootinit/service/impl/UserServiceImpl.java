@@ -7,6 +7,7 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.mapper.UserMapper;
 import com.louis.springbootinit.model.entity.User;
+import com.louis.springbootinit.model.enums.LoginStatusEnum;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import static com.louis.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -28,6 +31,8 @@ import static com.louis.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService {
+
+
     /**
      * 盐值，混淆密码
      */
@@ -92,12 +97,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_acct", userAccount);
-        queryWrapper.eq("user_pwd", encryptPassword);
         User user = this.baseMapper.selectOne(queryWrapper);
+        LoginUserVO loginUserVO = new LoginUserVO();
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
+            loginUserVO.setStatus(LoginStatusEnum.ACCOUNT_NOT_EXIST.getCode());
+            return loginUserVO;
+        }
+        String user_pwd = user.getUser_pwd();
+        if(!user_pwd.equals(encryptPassword)){
+            // 输入密码和原始密码不匹配
+            loginUserVO.setStatus(LoginStatusEnum.PASSWORD_ERROR.getCode());
+            return loginUserVO;
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
@@ -137,10 +149,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtils.copyProperties(user, loginUserVO);
+        // BeanUtils.copyProperties(user, loginUserVO);
+        loginUserVO.setStatus(LoginStatusEnum.LOGIN_SUCCESS.getCode());
         return loginUserVO;
     }
 
+    @Override
+    public List<User> searchByUsername(String user_name) {
+        if(user_name == null || user_name.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"姓名不能为空");
+        }
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("user_name",user_name);
+        return this.baseMapper.selectList(userQueryWrapper);
+    }
+
+    @Override
+    public User searchByNameAndTel(String userRealName, String userRealTel) {
+        if(userRealName == null || userRealName.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"姓名不能为空");
+        }
+        if (userRealTel == null || userRealTel.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"电话号码不能为空");
+        }
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("user_name",userRealName)
+                .eq("user_tel",userRealTel);
+        User user = this.baseMapper.selectOne(userQueryWrapper);
+        if(user == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户不存在");
+        }
+        return user;
+    }
 }
 
 

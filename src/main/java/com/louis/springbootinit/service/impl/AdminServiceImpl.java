@@ -6,6 +6,7 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.model.entity.Admin;
 import com.louis.springbootinit.model.entity.User;
+import com.louis.springbootinit.model.enums.LoginStatusEnum;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.service.AdminService;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 import static com.louis.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -52,12 +55,19 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
         // 查询用户是否存在
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("admin_acct", adminAccount);
-        queryWrapper.eq("admin_pwd", encryptPassword);
+        LoginAdminVO loginAdminVO = new LoginAdminVO();
         Admin admin = this.baseMapper.selectOne(queryWrapper);
         // 用户不存在
         if (admin == null) {
             log.info("user login failed, adminAccount cannot match adminPassword");
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
+            loginAdminVO.setStatus(LoginStatusEnum.ACCOUNT_NOT_EXIST.getCode());
+            return loginAdminVO;
+        }
+        String admin_pwd = admin.getAdmin_pwd();
+        // 校验密码
+        if(!admin_pwd.equals(encryptPassword)){
+            loginAdminVO.setStatus(LoginStatusEnum.PASSWORD_ERROR.getCode());
+            return loginAdminVO;
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, admin);
@@ -97,8 +107,36 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
             return null;
         }
         LoginAdminVO loginAdminVO = new LoginAdminVO();
-        BeanUtils.copyProperties(admin,loginAdminVO);
+        loginAdminVO.setStatus(LoginStatusEnum.LOGIN_SUCCESS.getCode());
         return loginAdminVO;
+    }
+
+    @Override
+    public List<Admin> searchByAdminName(String teacher_name) {
+        if(teacher_name == null || teacher_name.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"姓名不能为空");
+        }
+        QueryWrapper<Admin> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("admin_name",teacher_name);
+        return this.baseMapper.selectList(userQueryWrapper);
+    }
+
+    @Override
+    public Admin searchByNameAndTel(String realName, String realTel) {
+        if(realName == null || realName.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"姓名不能为空");
+        }
+        if (realTel == null || realTel.length() == 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"电话号码不能为空");
+        }
+        QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
+        adminQueryWrapper.eq("admin_name",realName)
+                .eq("admin_tel",realTel);
+        Admin admin  = this.baseMapper.selectOne(adminQueryWrapper);
+        if(admin == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户不存在");
+        }
+        return admin;
     }
 }
 

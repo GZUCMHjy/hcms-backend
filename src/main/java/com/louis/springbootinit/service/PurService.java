@@ -1,11 +1,8 @@
 package com.louis.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
-import com.louis.springbootinit.model.dto.purchase.PurchasePostRequest;
+import com.louis.springbootinit.model.dto.purchase.PurchaseAddRequest;
 import com.louis.springbootinit.model.entity.Pur;
-
-import java.util.List;
 
 /**
 * @author 35064
@@ -14,7 +11,9 @@ import java.util.List;
 */
 public interface PurService extends IService<Pur> {
 
-     Boolean addPurchase(Integer userId, PurchasePostRequest purchasePostRequest);
+     Boolean addPurchase(Integer userId, PurchaseAddRequest purchasePostRequest);
 
      Boolean addPurchaseTest(Pur pur);
+
+     Pur searchByUserId(Integer user_id);
 }

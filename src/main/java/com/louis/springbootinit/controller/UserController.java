@@ -11,7 +11,7 @@ import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.UserMapper;
 import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
-import com.louis.springbootinit.model.dto.purchase.PurchasePostRequest;
+import com.louis.springbootinit.model.dto.purchase.PurchaseAddRequest;
 import com.louis.springbootinit.model.entity.Lab;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.common.ResultUtils;
@@ -114,13 +114,14 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // 是注册时的手机号（保证每个用户的账号是唯一的）
         String user_acct = userLoginRequest.getUser_acct();
         String user_pwd = userLoginRequest.getUser_pwd();
         if (StringUtils.isAnyBlank(user_acct, user_pwd)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginUserVO loginUserVO = userService.userLogin(user_acct, user_pwd, request);
-        return ResultUtils.success(loginUserVO);
+        return ResultUtils.success(loginUserVO,"登录成功");
     }
 
     /**
@@ -240,7 +241,7 @@ public class UserController {
      */
     @PostMapping("/postPurchase")
     @ApiOperation(value = "提交采购单",notes = "提交采购单")
-    public BaseResponse<Boolean> postPurchase(@RequestBody PurchasePostRequest purchasePostRequest,HttpServletRequest request){
+    public BaseResponse<Boolean> postPurchase(@RequestBody PurchaseAddRequest purchasePostRequest, HttpServletRequest request){
         User loginUser = userService.getLoginUser(request);
         if(loginUser == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户未登录");

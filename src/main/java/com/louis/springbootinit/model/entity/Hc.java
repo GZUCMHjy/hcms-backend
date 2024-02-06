@@ -65,7 +65,7 @@ public class Hc implements Serializable {
     /**
      * 危化品类型id,外键
      */
-    private Integer hctypt_id;
+    private Integer hctype_id;
 
     /**
      * 危化品的保质期,以月为单位
@@ -102,6 +102,8 @@ public class Hc implements Serializable {
      */
     private Date updateTime;
 
+    private String hc_enname;
+
     /**
      * 逻辑删除
      */
@@ -132,7 +134,7 @@ public class Hc implements Serializable {
             && (this.getProfile() == null ? other.getProfile() == null : this.getProfile().equals(other.getProfile()))
             && (this.getProducationdate() == null ? other.getProducationdate() == null : this.getProducationdate().equals(other.getProducationdate()))
             && (this.getCas() == null ? other.getCas() == null : this.getCas().equals(other.getCas()))
-            && (this.getHctypt_id() == null ? other.getHctypt_id() == null : this.getHctypt_id().equals(other.getHctypt_id()))
+            && (this.getHctype_id() == null ? other.getHctype_id() == null : this.getHctype_id().equals(other.getHctype_id()))
             && (this.getShelflife() == null ? other.getShelflife() == null : this.getShelflife().equals(other.getShelflife()))
             && (this.getPur_id() == null ? other.getPur_id() == null : this.getPur_id().equals(other.getPur_id()))
             && (this.getBorrowed() == null ? other.getBorrowed() == null : this.getBorrowed().equals(other.getBorrowed()))
@@ -140,7 +142,8 @@ public class Hc implements Serializable {
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()));
+            && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()))
+                && (this.getHc_enname() == null ? other.getHc_enname() == null : this.getHc_enname().equals(other.getHc_enname()));
     }
 
     @Override
@@ -156,7 +159,7 @@ public class Hc implements Serializable {
         result = prime * result + ((getProfile() == null) ? 0 : getProfile().hashCode());
         result = prime * result + ((getProducationdate() == null) ? 0 : getProducationdate().hashCode());
         result = prime * result + ((getCas() == null) ? 0 : getCas().hashCode());
-        result = prime * result + ((getHctypt_id() == null) ? 0 : getHctypt_id().hashCode());
+        result = prime * result + ((getHctype_id() == null) ? 0 : getHctype_id().hashCode());
         result = prime * result + ((getShelflife() == null) ? 0 : getShelflife().hashCode());
         result = prime * result + ((getPur_id() == null) ? 0 : getPur_id().hashCode());
         result = prime * result + ((getBorrowed() == null) ? 0 : getBorrowed().hashCode());
@@ -165,6 +168,7 @@ public class Hc implements Serializable {
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDelete() == null) ? 0 : getIsDelete().hashCode());
+        result = prime * result + ((getHc_enname() == null) ? 0 : getHc_enname().hashCode());
         return result;
     }
 
@@ -183,7 +187,7 @@ public class Hc implements Serializable {
         sb.append(", profile=").append(profile);
         sb.append(", producationdate=").append(producationdate);
         sb.append(", cas=").append(cas);
-        sb.append(", hctypt_id=").append(hctypt_id);
+        sb.append(", hctypt_id=").append(hctype_id);
         sb.append(", shelflife=").append(shelflife);
         sb.append(", pur_id=").append(pur_id);
         sb.append(", borrowed=").append(borrowed);
@@ -192,6 +196,7 @@ public class Hc implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", isDelete=").append(isDelete);
+        sb.append(", hc_enname=").append(hc_enname);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
