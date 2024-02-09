@@ -1,9 +1,7 @@
 package com.louis.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,9 +15,9 @@ import lombok.Data;
 @Data
 public class Hc implements Serializable {
     /**
-     * 危化品id,主键
+     * 危化品id,主键（默认自增）
      */
-    @TableId
+    @TableId(value = "hc_id",type = IdType.AUTO)
     private Integer hc_id;
 
     /**
@@ -102,7 +100,12 @@ public class Hc implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 英文名
+     */
     private String hc_enname;
+
+    private String hc_productor;
 
     /**
      * 逻辑删除
@@ -143,7 +146,8 @@ public class Hc implements Serializable {
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()))
-                && (this.getHc_enname() == null ? other.getHc_enname() == null : this.getHc_enname().equals(other.getHc_enname()));
+                && (this.getHc_enname() == null ? other.getHc_enname() == null : this.getHc_enname().equals(other.getHc_enname()))
+                && (this.getHc_productor() == null ? other.getHc_productor() == null : this.getHc_productor().equals(other.getHc_productor()));
     }
 
     @Override
@@ -169,6 +173,7 @@ public class Hc implements Serializable {
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDelete() == null) ? 0 : getIsDelete().hashCode());
         result = prime * result + ((getHc_enname() == null) ? 0 : getHc_enname().hashCode());
+        result = prime * result + ((getHc_productor() == null) ? 0 : getHc_productor().hashCode());
         return result;
     }
 
@@ -196,6 +201,7 @@ public class Hc implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", isDelete=").append(isDelete);
+        sb.append(", hc_productor=").append(hc_productor);
         sb.append(", hc_enname=").append(hc_enname);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

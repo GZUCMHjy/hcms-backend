@@ -1,9 +1,7 @@
 package com.louis.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -18,7 +16,7 @@ public class Hcib implements Serializable {
     /**
      * 危化品入库记录id 主键
      */
-    @TableId
+    @TableId(value = "hcib_id",type = IdType.AUTO)
     private Integer hcib_id;
 
     /**
