@@ -56,6 +56,9 @@ public class AdminController {
     private HctypeService hctypeService;
 
     @Resource
+    private PurService purService;
+
+    @Resource
     private WxOpenConfig wxOpenConfig;
 
     @Resource
@@ -354,6 +357,16 @@ public class AdminController {
         ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
         List<HcTypeListVO> hcTypesListInfo = hctypeService.getHcTypeListInfo(hc_name);
         return ResultUtils.success(hcTypesListInfo);
+    }
+
+    /**
+     * 获取所有采购记录
+     * @return
+     */
+    @GetMapping("/getAllpurchase")
+    public BaseResponse<List<Pur>> getAllpurchase(){
+        List<Pur> list = purService.list();
+        return ResultUtils.success(list);
     }
 
 
