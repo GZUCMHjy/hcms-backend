@@ -10,12 +10,15 @@ import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.model.dto.Record.HcAnotherIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
+import com.louis.springbootinit.model.dto.Record.QuitOrEndRequest;
 import com.louis.springbootinit.model.dto.admin.AdminLoginRequest;
 import com.louis.springbootinit.model.dto.admin.AdminUpdateMyRequest;
 import com.louis.springbootinit.model.dto.user.UserBaseInfoRequest;
 import com.louis.springbootinit.model.entity.Admin;
+import com.louis.springbootinit.model.entity.Ib;
 import com.louis.springbootinit.model.entity.User;
 import com.louis.springbootinit.model.entity.Wh;
+import com.louis.springbootinit.model.vo.IbRecordVO;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
 import com.louis.springbootinit.model.vo.MemberAdminVO;
 import com.louis.springbootinit.model.vo.MemberUserVO;
@@ -218,6 +221,46 @@ public class AdminController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 采购入库
+     * @param hcIbRecordAddRequest
+     * @return
+     */
+    @PostMapping("/purchaseIb")
+    public BaseResponse<Integer> purchaseIb(@RequestBody HcIbRecordAddRequest hcIbRecordAddRequest){
+        ThrowUtils.throwIf(hcIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
+        int ib_id = hcibService.addHcIbRecords(hcIbRecordAddRequest);
+        return ResultUtils.success(ib_id);
+    }
+
+    /**
+     * 其他入库
+     * @param hcAnotherIbRecordAddRequest
+     * @return
+     */
+    @PostMapping("/anotherIb")
+    public BaseResponse<Integer> anotherIb(@RequestBody HcAnotherIbRecordAddRequest hcAnotherIbRecordAddRequest){
+        ThrowUtils.throwIf(hcAnotherIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
+        int ib_id = hcibService.addHcAnotherIbRecords(hcAnotherIbRecordAddRequest);
+        return ResultUtils.success(ib_id);
+    }
+
+    /**
+     * 结束/取消入库
+     * @param quitOrEndRequest
+     * @return
+     */
+    @PostMapping("cancelIb")
+    public BaseResponse<Boolean> cancelOrEndIb(@RequestBody QuitOrEndRequest quitOrEndRequest){
+        ThrowUtils.throwIf(quitOrEndRequest == null,ErrorCode.PARAMS_ERROR,"参数不能为空");
+        boolean b = ibService.cancelOrEndIb(quitOrEndRequest);
+        if(!b){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"取消失败");
+        }
+        // 结束入库
+        return ResultUtils.success(true);
+    }
+
 
     /**
      * 获取领用人信息
@@ -258,31 +301,16 @@ public class AdminController {
     }
 
     /**
-     * 采购入库
-     * @param hcIbRecordAddRequest
+     * 获取此次入库危化品
+     * @param ib_id
      * @return
      */
-    @PostMapping("/purchaseIb")
-    public BaseResponse<Integer> purchaseIb(@RequestBody HcIbRecordAddRequest hcIbRecordAddRequest){
-        ThrowUtils.throwIf(hcIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
-        int ib_id = hcibService.addHcIbRecords(hcIbRecordAddRequest);
-        return ResultUtils.success(ib_id);
+    @GetMapping("/getHcIbInfo/{ib_id}")
+    public BaseResponse<IbRecordVO> getIbRecordsInfo(@PathVariable Integer ib_id){
+        ThrowUtils.throwIf(ib_id == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        IbRecordVO ibRecordsInfo = ibService.getIbRecordsInfo(ib_id);
+        return ResultUtils.success(ibRecordsInfo);
     }
-
-    /**
-     * 其他入库
-     * @param hcAnotherIbRecordAddRequest
-     * @return
-     */
-    @PostMapping("/anotherIb")
-    public BaseResponse<Integer> anotherIb(@RequestBody HcAnotherIbRecordAddRequest hcAnotherIbRecordAddRequest){
-        ThrowUtils.throwIf(hcAnotherIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
-        int ib_id = hcibService.addHcAnotherIbRecords(hcAnotherIbRecordAddRequest);
-        return ResultUtils.success(ib_id);
-    }
-
-
-
 
 //    /**
 //     * 分页获取管理员封装列表

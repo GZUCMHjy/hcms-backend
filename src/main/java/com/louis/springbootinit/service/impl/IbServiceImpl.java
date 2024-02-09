@@ -4,19 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.louis.springbootinit.common.ErrorCode;
+import com.louis.springbootinit.common.ResultUtils;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.IbMapper;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
+import com.louis.springbootinit.model.dto.Record.QuitOrEndRequest;
 import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
 import com.louis.springbootinit.model.entity.*;
+import com.louis.springbootinit.model.vo.HcListVO;
+import com.louis.springbootinit.model.vo.IbRecordVO;
 import com.louis.springbootinit.service.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,6 +44,20 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
     @Resource
     private AdminService adminService;
 
+    @Resource
+    private IbService ibService;
+
+    @Resource
+    private HcService hcService;
+
+    @Resource
+    private HcibService hcibService;
+
+    @Resource
+    private HctypeService hctypeService;
+
+    @Resource
+    private WhService whService;
 
     /**
      * 开始入库,生成入库记录
@@ -82,6 +102,126 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"入库失败");
         }
         return false;
+    }
+
+    /**
+     * 结束/取消入库
+     * @param quitOrEndRequest
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean cancelOrEndIb(QuitOrEndRequest quitOrEndRequest) {
+        Ib byId = ibService.getById(quitOrEndRequest.getIb_id());
+        ThrowUtils.throwIf(byId == null,ErrorCode.PARAMS_ERROR,"查无入库记录");
+        if(quitOrEndRequest.getEnd_cancel() == 1){
+            // 取消(逻辑删除入库记录)
+            byId.setIsDelete(1);
+            boolean b = ibService.updateById(byId);
+            if(!b){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"取消失败");
+            }
+        }
+        // 删除危化品表
+        // 获取危化品类型id
+        Integer hctype_id = byId.getHctype_id();
+        QueryWrapper<Hc> hcQueryWrapper = new QueryWrapper<Hc>().eq("hctype_id", hctype_id);
+        List<Hc> hcs = hcService.list(hcQueryWrapper);
+        if( hcs .size() == 1){
+            // 普通入库
+            Hc targetHc =  hcs.get(0);
+            targetHc.setIsDelete(1);
+            boolean b = hcService.updateById(targetHc);
+            ThrowUtils.throwIf(b, ErrorCode.SYSTEM_ERROR,"取消失败");
+        }else{
+            // 采购入库
+            try{
+                hcs.forEach(hc ->{
+                    hc.setIsDelete(1);
+                });
+                // 批量修改
+                hcService.updateBatchById(hcs);
+            }catch (BusinessException e){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,e.getCause().toString());
+            }
+        }
+        // 删除危化品入库记录表
+        Integer ib_id = byId.getIb_id();
+        QueryWrapper<Hcib> hcIbQueryWrapper = new QueryWrapper<Hcib>().eq("ib_id", ib_id);
+        List<Hcib> hcibs = hcibService.list(hcIbQueryWrapper);
+        if( hcibs.size() == 1){
+            // 普通入库
+            Hcib hcib = hcibService.list(hcIbQueryWrapper).get(0);
+            hcib.setIsDelete(1);
+            boolean b = hcibService.updateById(hcib);
+            ThrowUtils.throwIf(b, ErrorCode.SYSTEM_ERROR,"取消失败");
+        }else{
+            // 采购入库
+            try{
+                hcibs.forEach(hcib ->{
+                    hcib.setIsDelete(1);
+                });
+                // 批量修改
+                hcibService.updateBatchById(hcibs);
+            }catch (BusinessException e){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,e.getCause().toString());
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 获取此次入库危化品
+     * @param ib_id
+     * @return
+     */
+    @Override
+    public IbRecordVO getIbRecordsInfo(Integer ib_id) {
+        if( ib_id == null){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"参数不能为空");
+        }
+        QueryWrapper<Ib> ibQueryWrapper = new QueryWrapper<>();
+        ibQueryWrapper.eq("ib_id",ib_id);
+        Ib byId = ibService.getById(ib_id);
+        if(byId == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无入库记录");
+        }
+        // 获取危化品入库记录列表
+        QueryWrapper<Hcib> hcibQueryWrapper = new QueryWrapper<>();
+        hcibQueryWrapper.eq("ib_id",ib_id);
+        List<Hcib> hcibs = hcibService.list(hcibQueryWrapper);
+
+        List<HcListVO> hcListVOS = new ArrayList<>(hcibs.size());
+        IbRecordVO ibRecordVO = new IbRecordVO();
+        ibRecordVO.setIb_id(ib_id);
+        for(Hcib hcib : hcibs){
+            Integer hc_id = hcib.getHc_id();
+            Hc hc = hcService.getById(hc_id);
+            Integer hctype_id = hc.getHctype_id();
+            Hctype hctype = hctypeService.getById(hctype_id);
+            ThrowUtils.throwIf(hctype == null,ErrorCode.PARAMS_ERROR,"查无危化品类型");
+            HcListVO hcListVO = new HcListVO();
+            hcListVO.setHcib_id(hcib.getHcib_id());
+            hcListVO.setHc_id(hc.getHc_id());
+            hcListVO.setHc_name(hc.getHc_name());
+            hcListVO.setStates(hc.getStates());
+            hcListVO.setHc_spec(Integer.parseInt(hctype.getHc_spec()));
+            hcListVO.setHc_unit(hctype.getHc_unit());
+            hcListVO.setHc_remnant(hc.getHc_remnant());
+            Integer wh_id = hc.getWh_id();
+            Wh wh = whService.getById(wh_id);
+            if(wh == null){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无仓库");
+            }
+            hcListVO.setWh_name(wh.getWh_name());
+            hcListVO.setPur_id(hc.getPur_id());
+            hcListVO.setProductiondate(hc.getProducationdate());
+            hcListVO.setShelflife(hc.getShelflife());
+            hcListVO.setIb_time(byId.getIb_time());
+            hcListVOS.add(hcListVO);
+        }
+        ibRecordVO.setHc_list(hcListVOS);
+        return ibRecordVO;
     }
 
 }
