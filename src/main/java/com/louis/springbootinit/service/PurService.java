@@ -13,7 +13,5 @@ public interface PurService extends IService<Pur> {
 
      Boolean addPurchase(Integer userId, PurchaseAddRequest purchasePostRequest);
 
-     Boolean addPurchaseTest(Pur pur);
-
      Pur searchByUserId(Integer user_id);
 }

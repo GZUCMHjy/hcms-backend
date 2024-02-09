@@ -2,11 +2,13 @@ package com.louis.springbootinit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.louis.springbootinit.common.BaseResponse;
+import com.louis.springbootinit.common.DeleteRequest;
 import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.common.ResultUtils;
 import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
+import com.louis.springbootinit.model.dto.HcTypeAddRequest;
 import com.louis.springbootinit.model.dto.Record.HcAnotherIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
@@ -14,14 +16,8 @@ import com.louis.springbootinit.model.dto.Record.QuitOrEndRequest;
 import com.louis.springbootinit.model.dto.admin.AdminLoginRequest;
 import com.louis.springbootinit.model.dto.admin.AdminUpdateMyRequest;
 import com.louis.springbootinit.model.dto.user.UserBaseInfoRequest;
-import com.louis.springbootinit.model.entity.Admin;
-import com.louis.springbootinit.model.entity.Ib;
-import com.louis.springbootinit.model.entity.User;
-import com.louis.springbootinit.model.entity.Wh;
-import com.louis.springbootinit.model.vo.IbRecordVO;
-import com.louis.springbootinit.model.vo.LoginAdminVO;
-import com.louis.springbootinit.model.vo.MemberAdminVO;
-import com.louis.springbootinit.model.vo.MemberUserVO;
+import com.louis.springbootinit.model.entity.*;
+import com.louis.springbootinit.model.vo.*;
 import com.louis.springbootinit.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,13 +53,13 @@ public class AdminController {
     private HcibService hcibService;
 
     @Resource
-    private WxOpenConfig wxOpenConfig;
+    private HctypeService hctypeService;
 
+    @Resource
+    private WxOpenConfig wxOpenConfig;
 
     @Resource
     private IbService ibService;
-
-    // region 登录相关
 
 
     /**
@@ -116,6 +112,7 @@ public class AdminController {
         Admin admin = adminService.getLoginAdmin(request);
         return ResultUtils.success(adminService.getLoginAdminVO(admin));
     }
+
     /**
      * 更新个人信息
      *
@@ -142,7 +139,6 @@ public class AdminController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
-
     /**
      * 搜索管理员
      * @param name
@@ -261,7 +257,6 @@ public class AdminController {
         return ResultUtils.success(true);
     }
 
-
     /**
      * 获取领用人信息
      * @param name
@@ -311,6 +306,56 @@ public class AdminController {
         IbRecordVO ibRecordsInfo = ibService.getIbRecordsInfo(ib_id);
         return ResultUtils.success(ibRecordsInfo);
     }
+
+    /**
+     * 获取危化品类型信息
+     * @param hc_name
+     * @return
+     */
+    @GetMapping("/getHcIbInfo/{hc_name}")
+    public BaseResponse<List<HcTypeInfoVO>> getHcTypeInfo(@PathVariable String hc_name){
+        ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        List<HcTypeInfoVO> hcTypesInfo = hctypeService.getHcTypeInfo(hc_name);
+        return ResultUtils.success(hcTypesInfo);
+    }
+
+    /**
+     * 新增危化品类型
+     * @param hcTypeAddRequest
+     * @return
+     */
+    @PostMapping("/addHctype")
+    public BaseResponse<Boolean> addHctype(@RequestBody HcTypeAddRequest hcTypeAddRequest){
+        ThrowUtils.throwIf(hcTypeAddRequest == null,ErrorCode.PARAMS_ERROR,"参数不能为空");
+        boolean result = hctypeService.addHcType(hcTypeAddRequest);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 删除危化品类型
+     * @param deleteRequest
+     * @return
+     */
+    @PostMapping("/deleteHctype")
+    public BaseResponse<Boolean> deleteHctype(@RequestBody DeleteRequest deleteRequest){
+        ThrowUtils.throwIf(deleteRequest == null,ErrorCode.PARAMS_ERROR,"参数不能为空");
+        boolean result = hctypeService.removeById(deleteRequest.getId());
+        ThrowUtils.throwIf(!result,ErrorCode.PARAMS_ERROR,"参数不能为空");
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 获取危化品类型列表
+     * @param hc_name
+     * @return
+     */
+    @GetMapping("/getHctypeList/{hc_name}")
+    public BaseResponse<List<HcTypeListVO>> getHctypeList(@PathVariable String hc_name){
+        ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        List<HcTypeListVO> hcTypesListInfo = hctypeService.getHcTypeListInfo(hc_name);
+        return ResultUtils.success(hcTypesListInfo);
+    }
+
 
 //    /**
 //     * 分页获取管理员封装列表

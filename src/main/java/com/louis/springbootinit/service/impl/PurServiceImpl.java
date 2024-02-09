@@ -76,11 +76,6 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
 
         return Boolean.TRUE;
     }
-    @Override
-    public Boolean addPurchaseTest(Pur pur) {
-        purMapper.insert(pur);
-        return Boolean.TRUE;
-    }
 
     @Override
     public Pur searchByUserId(Integer user_id) {
