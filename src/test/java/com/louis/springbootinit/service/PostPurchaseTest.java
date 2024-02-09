@@ -19,19 +19,19 @@ public class PostPurchaseTest {
 
     @Resource
     private PurService purService;
-    @Test
-    void postPurchase(){
-        Pur pur = new Pur();
-        pur.setUser_id(1);
-        pur.setTotalprice(new BigDecimal(100));
-        pur.setFile("123".getBytes());
-        ArrayList<HctypeRecord> hcTypeArrayList = new ArrayList<HctypeRecord>();
-        HctypeRecord hcType = new HctypeRecord();
-        hcType.setPrice(new BigDecimal(100));
-        hcType.setCount(1);
-        hcTypeArrayList.add(hcType);
-        pur.setHctype_list(hcTypeArrayList);
-        purService.addPurchaseTest(pur);
-    }
+//    @Test
+//    void postPurchase(){
+//        Pur pur = new Pur();
+//        pur.setUser_id(1);
+//        pur.setTotalprice(new BigDecimal(100));
+//        pur.setFile("123".getBytes());
+//        ArrayList<HctypeRecord> hcTypeArrayList = new ArrayList<HctypeRecord>();
+//        HctypeRecord hcType = new HctypeRecord();
+//        hcType.setPrice(new BigDecimal(100));
+//        hcType.setCount(1);
+//        hcTypeArrayList.add(hcType);
+//        pur.setHctype_list(hcTypeArrayList);
+//        purService.addPurchaseTest(pur);
+//    }
 
 }

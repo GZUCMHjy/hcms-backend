@@ -13,31 +13,40 @@ import java.util.Date;
  * @description 入库基本信息填写类
  */
 @Data
-public class IbDetailsAddRequest implements Serializable {
+public class HcIbRecordAddRequest implements Serializable {
 
 
 
     private static final long serialVersionUID = -8458538858940807480L;
 
-    // 危化品名
-    private String hc_name;
-    // 危化品规格
-    private String hc_spec;
-    // 单位
-    private String hc_unit;
-    // 采购id
+    // 入库编号
+    private Integer ib_id;
+
+    // 危化品类型id
+    private Integer hctype_id;
+
+    // 采购编号
     private Integer pur_id;
+
     // 物理状态（固体、液体、气体）
     private String states;
+
     // 余量
     private Integer hc_remnant;
+
+    // 单价
     private BigDecimal price;
+
     // 生产日期
     private Date producationdate;
+
     // 保质期
     private Integer shelflife;
+
     // 生产商
     private String hc_productor;
+
     // 批量入库数量
-    private Integer batch;
+    private Integer count;
+
 }

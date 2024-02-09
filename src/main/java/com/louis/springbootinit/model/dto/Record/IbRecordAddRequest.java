@@ -29,6 +29,27 @@ public class IbRecordAddRequest implements Serializable {
      */
     private String ib_purpose;
 
+    private String ib_content;
+
+    /**
+     * 仓库管理员a
+     */
+    private Integer admina_id;
+    /**
+     * 仓库管理员a
+     */
+    private Integer adminb_id;
+
+    /**
+     * 本人
+     */
+    private Integer user_id;
+
+    /**
+     * 陪同老师
+     */
+    private Integer teacher_id;
+
     /**
      * 仓库管理员a
      */

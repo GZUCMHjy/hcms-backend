@@ -7,20 +7,19 @@ import com.louis.springbootinit.common.ResultUtils;
 import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
-import com.louis.springbootinit.model.dto.HcInfo.HcInfoAddRequest;
+import com.louis.springbootinit.model.dto.Record.HcAnotherIbRecordAddRequest;
+import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
 import com.louis.springbootinit.model.dto.admin.AdminLoginRequest;
-import com.louis.springbootinit.model.dto.admin.AdminRegisterRequest;
 import com.louis.springbootinit.model.dto.admin.AdminUpdateMyRequest;
+import com.louis.springbootinit.model.dto.user.UserBaseInfoRequest;
 import com.louis.springbootinit.model.entity.Admin;
 import com.louis.springbootinit.model.entity.User;
 import com.louis.springbootinit.model.entity.Wh;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
 import com.louis.springbootinit.model.vo.MemberAdminVO;
 import com.louis.springbootinit.model.vo.MemberUserVO;
-import com.louis.springbootinit.service.AdminService;
-import com.louis.springbootinit.service.UserService;
-import com.louis.springbootinit.service.WhService;
+import com.louis.springbootinit.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +51,14 @@ public class AdminController {
     private WhService whService;
 
     @Resource
+    private HcibService hcibService;
+
+    @Resource
     private WxOpenConfig wxOpenConfig;
+
+
+    @Resource
+    private IbService ibService;
 
     // region 登录相关
 
@@ -135,17 +141,6 @@ public class AdminController {
     }
 
     /**
-     * （开始入库）危化品入库基本信息
-     * @param ibRecordAddRequest
-     * @return
-     */
-    @PostMapping("/ib_baseInfo")
-    public BaseResponse<Boolean> ib_baseInfo(@RequestBody IbRecordAddRequest ibRecordAddRequest){
-
-        return ResultUtils.success(true);
-    }
-
-    /**
      * 搜索管理员
      * @param name
      * @return
@@ -185,6 +180,105 @@ public class AdminController {
             memberUserVOList.add(memberUserVO);
         });
         return ResultUtils.success(memberUserVOList);
+    }
+
+    /**
+     * 开始入库,生成入库记录
+     * @param ibRecordRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/addIbBaseRecords")
+    public BaseResponse<Boolean> addIbRecords(@RequestBody IbRecordAddRequest ibRecordRequest, HttpServletRequest request){
+        if(ibRecordRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+        }
+        Integer adminb_id = ibRecordRequest.getAdminb_id();
+        Integer admina_id = ibRecordRequest.getAdmina_id();
+        Integer teacher_id = ibRecordRequest.getTeacher_id();
+        Integer user_id = ibRecordRequest.getUser_id();
+        // 枚举（入库目的）
+        String ib_purpose = ibRecordRequest.getIb_purpose();
+        String ib_content = ibRecordRequest.getIb_content();
+        Integer whstart_id = ibRecordRequest.getWhstart_id();
+        Integer whend_id = ibRecordRequest.getWhend_id();
+        Wh whend = whService.getById(whend_id);
+        Wh whstart = whService.getById(whstart_id);
+        String whstart_name = whstart.getWh_name();
+        String whend_name = whend.getWh_name();
+        // 校验参数
+        if(StringUtils.isAnyBlank(adminb_id.toString(),admina_id.toString(), teacher_id.toString(),user_id.toString(),
+                ib_content,whstart_name,whend_name,ib_purpose,ib_content)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+        }
+        boolean b = ibService.addIbRecords(ibRecordRequest);
+        if(!b){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"入库失败");
+        }
+        return ResultUtils.success(true);
+    }
+
+
+    /**
+     * 获取领用人信息
+     * @param name
+     * @return
+     */
+    @GetMapping("/getUserInfo")
+    public BaseResponse<List<UserBaseInfoRequest>> getUserInfo(@RequestParam String name){
+        List<User> users = userService.searchByUsername(name);
+        List<UserBaseInfoRequest> userBaseInfoRequests = new ArrayList<>();
+        users.stream().forEach(user->{
+            UserBaseInfoRequest userBaseInfoRequest = new UserBaseInfoRequest();
+            userBaseInfoRequest.setUser_id(user.getUser_id());
+            userBaseInfoRequest.setUser_name(user.getUser_name());
+            userBaseInfoRequest.setUser_tel(user.getUser_tel());
+            userBaseInfoRequests.add(userBaseInfoRequest);
+        });
+        return ResultUtils.success(userBaseInfoRequests);
+    }
+
+    /**
+     * 获取管理员信息
+     * @param name
+     * @return
+     */
+    @GetMapping("/getAdminInfo")
+    public BaseResponse<List<UserBaseInfoRequest>> getAdminInfo(@RequestParam String name){
+        List<Admin> admins = adminService.searchByAdminName(name);
+        List<UserBaseInfoRequest> userBaseInfoRequests = new ArrayList<>();
+        admins.stream().forEach(admin->{
+            UserBaseInfoRequest userBaseInfoRequest = new UserBaseInfoRequest();
+            userBaseInfoRequest.setUser_id(admin.getAdmin_id());
+            userBaseInfoRequest.setUser_name(admin.getAdmin_name());
+            userBaseInfoRequest.setUser_tel(admin.getAdmin_tel());
+            userBaseInfoRequests.add(userBaseInfoRequest);
+        });
+        return ResultUtils.success(userBaseInfoRequests);
+    }
+
+    /**
+     * 采购入库
+     * @param hcIbRecordAddRequest
+     * @return
+     */
+    @PostMapping("/purchaseIb")
+    public BaseResponse<Integer> purchaseIb(@RequestBody HcIbRecordAddRequest hcIbRecordAddRequest){
+        ThrowUtils.throwIf(hcIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
+        int ib_id = hcibService.addHcIbRecords(hcIbRecordAddRequest);
+        return ResultUtils.success(ib_id);
+    }
+
+    /**
+     * 其他入库
+     * @param hcAnotherIbRecordAddRequest
+     * @return
+     */
+    @PostMapping("/anotherIb")
+    public BaseResponse<Integer> anotherIb(@RequestBody HcAnotherIbRecordAddRequest hcAnotherIbRecordAddRequest){
+        ThrowUtils.throwIf(hcAnotherIbRecordAddRequest == null, ErrorCode.PARAMS_ERROR);
+        int ib_id = hcibService.addHcAnotherIbRecords(hcAnotherIbRecordAddRequest);
+        return ResultUtils.success(ib_id);
     }
 
 

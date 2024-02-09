@@ -1,5 +1,7 @@
 package com.louis.springbootinit.service;
 
+import com.louis.springbootinit.model.dto.Record.HcAnotherIbRecordAddRequest;
+import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.entity.Hcib;
 
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -11,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface HcibService extends IService<Hcib> {
 
+    int addHcIbRecords(HcIbRecordAddRequest hcIbRecordAddRequest);
+
+    int addHcAnotherIbRecords(HcAnotherIbRecordAddRequest hcAnotherIbRecordAddRequest);
 }
