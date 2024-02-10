@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
         // 采购人id
         pur.setUser_id(userId);
         List<HctypeRecord> hctypeRecords = purchasePostRequest.getHctypeRecords();
-        List<HctypeRecord> hctypeRecord_list = pur.getHctypeRecord_list();
+        List<HctypeRecord> hctypeRecord_list = new ArrayList<>(hctypeRecords.size());
         // 初始化采购总价为0
         BigDecimal totolp = new BigDecimal(0);
         hctypeRecords.stream().forEach(hctypeRecord -> {
@@ -62,18 +63,16 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
             // 记录采购的危化品类型列表
             hctypeRecord_list.add(addHcTypeRecord);
         });
-        pur.setHctypeRecord_list(hctypeRecord_list);
+        pur.setHctype_list(hctypeRecord_list);
         pur.setTotalprice(totolp);
         pur.setFile(purchasePostRequest.getFile());
         pur.setCreateTime(new Date(System.currentTimeMillis()));
         pur.setUpdateTime(new Date(System.currentTimeMillis()));
-        // 插入数据
+        // 插入一条采购记录
         int success = purMapper.insert(pur);
         if(success == 0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"提交采购失败");
         }
-        // 更新危化品表
-
         return Boolean.TRUE;
     }
 

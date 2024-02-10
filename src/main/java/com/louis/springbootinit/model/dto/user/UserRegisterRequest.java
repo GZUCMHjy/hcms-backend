@@ -19,11 +19,12 @@ public class UserRegisterRequest implements Serializable {
     private String user_tel;
     // 用户密码
     private String user_pwd;
-    // 用户确认密码
-    private String check_pwd;
+
     // 用户性别
     private String user_gender;
     // 用户工作单位
     private String user_institution;
+    // 实验室
+    private String wh_name;
 
 }

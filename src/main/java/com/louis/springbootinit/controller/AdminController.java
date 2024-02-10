@@ -84,7 +84,13 @@ public class AdminController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginAdminVO loginAdminVO = adminService.adminLogin(adminAccount, adminPassword, request);
-        return ResultUtils.success(loginAdminVO);
+        if(loginAdminVO.getStatus() == -1){
+            return ResultUtils.success(loginAdminVO,"密码错误");
+        }
+        if(loginAdminVO.getStatus() == 0){
+            return ResultUtils.success(loginAdminVO,"账号不存在");
+        }
+        return ResultUtils.success(loginAdminVO,"登陆成功");
     }
 
     /**
@@ -115,6 +121,25 @@ public class AdminController {
         Admin admin = adminService.getLoginAdmin(request);
         return ResultUtils.success(adminService.getLoginAdminVO(admin));
     }
+    /**
+     * 获取当前登录管理员
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/get/adminInfo")
+    @ApiOperation(value = "获取当前管理员信息",notes = "获取当前管理员信息")
+    public BaseResponse<AdminInfoVO> getAdminInfo(HttpServletRequest request) {
+        Admin admin = adminService.getLoginAdmin(request);
+        AdminInfoVO adminInfoVO = new AdminInfoVO();
+        adminInfoVO.setAdmin_gender(admin.getAdmin_gender());
+        adminInfoVO.setAdmin_position(admin.getAdmin_position());
+        adminInfoVO.setAdmin_institution(admin.getAdmin_institution());
+        adminInfoVO.setAdmin_name(admin.getAdmin_name());
+        adminInfoVO.setAdmin_tel(admin.getAdmin_tel());
+        adminInfoVO.setWh_id(admin.getWh_id());
+        return ResultUtils.success(adminInfoVO);
+    }
 
     /**
      * 更新个人信息
@@ -132,12 +157,12 @@ public class AdminController {
         }
         Admin loginAdmin = adminService.getLoginAdmin(request);
         QueryWrapper<Wh> whQueryWrapper = new QueryWrapper<>();
-        whQueryWrapper.eq("wh_name", adminUpdateMyRequest.getWarehouse_name());
+        whQueryWrapper.eq("wh_id", adminUpdateMyRequest.getWh_id());
         Integer wh_id = whService.getOne(whQueryWrapper).getWh_id();
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminUpdateMyRequest, admin);
-        admin.setWh_id(wh_id);
-        admin.setAdmin_id(loginAdmin.getAdmin_id());
+//        admin.setWh_id(wh_id);
+//        admin.setAdmin_id(loginAdmin.getAdmin_id());
         boolean result = adminService.updateById(admin);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);

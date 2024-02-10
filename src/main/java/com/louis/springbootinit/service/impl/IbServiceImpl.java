@@ -7,6 +7,7 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.common.ResultUtils;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
+import com.louis.springbootinit.mapper.HcibMapper;
 import com.louis.springbootinit.mapper.IbMapper;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
@@ -17,6 +18,7 @@ import com.louis.springbootinit.model.vo.HcListVO;
 import com.louis.springbootinit.model.vo.IbRecordVO;
 import com.louis.springbootinit.service.*;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,13 +47,10 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
     private AdminService adminService;
 
     @Resource
-    private IbService ibService;
-
-    @Resource
     private HcService hcService;
 
     @Resource
-    private HcibService hcibService;
+    private HcibMapper hcibMapper;
 
     @Resource
     private HctypeService hctypeService;
@@ -112,12 +111,12 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
     @Override
     @Transactional
     public boolean cancelOrEndIb(QuitOrEndRequest quitOrEndRequest) {
-        Ib byId = ibService.getById(quitOrEndRequest.getIb_id());
+        Ib byId = this.getById(quitOrEndRequest.getIb_id());
         ThrowUtils.throwIf(byId == null,ErrorCode.PARAMS_ERROR,"查无入库记录");
         if(quitOrEndRequest.getEnd_cancel() == 1){
             // 取消(逻辑删除入库记录)
             byId.setIsDelete(1);
-            boolean b = ibService.updateById(byId);
+            boolean b = this.updateById(byId);
             if(!b){
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,"取消失败");
             }
@@ -148,21 +147,20 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         // 删除危化品入库记录表
         Integer ib_id = byId.getIb_id();
         QueryWrapper<Hcib> hcIbQueryWrapper = new QueryWrapper<Hcib>().eq("ib_id", ib_id);
-        List<Hcib> hcibs = hcibService.list(hcIbQueryWrapper);
+        List<Hcib> hcibs = hcibMapper.selectList(hcIbQueryWrapper);
         if( hcibs.size() == 1){
             // 普通入库
-            Hcib hcib = hcibService.list(hcIbQueryWrapper).get(0);
+            Hcib hcib = hcibs.get(0);
             hcib.setIsDelete(1);
-            boolean b = hcibService.updateById(hcib);
-            ThrowUtils.throwIf(b, ErrorCode.SYSTEM_ERROR,"取消失败");
+            int b = hcibMapper.updateById(hcib);
+            ThrowUtils.throwIf(b == 0, ErrorCode.SYSTEM_ERROR,"取消失败");
         }else{
             // 采购入库
             try{
                 hcibs.forEach(hcib ->{
                     hcib.setIsDelete(1);
+                    hcibMapper.updateById(hcib);
                 });
-                // 批量修改
-                hcibService.updateBatchById(hcibs);
             }catch (BusinessException e){
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,e.getCause().toString());
             }
@@ -182,14 +180,14 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         }
         QueryWrapper<Ib> ibQueryWrapper = new QueryWrapper<>();
         ibQueryWrapper.eq("ib_id",ib_id);
-        Ib byId = ibService.getById(ib_id);
+        Ib byId = this.getById(ib_id);
         if(byId == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无入库记录");
         }
         // 获取危化品入库记录列表
         QueryWrapper<Hcib> hcibQueryWrapper = new QueryWrapper<>();
         hcibQueryWrapper.eq("ib_id",ib_id);
-        List<Hcib> hcibs = hcibService.list(hcibQueryWrapper);
+        List<Hcib> hcibs = hcibMapper.selectList(hcibQueryWrapper);
 
         List<HcListVO> hcListVOS = new ArrayList<>(hcibs.size());
         IbRecordVO ibRecordVO = new IbRecordVO();

@@ -1,9 +1,7 @@
 package com.louis.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -24,7 +22,7 @@ public class Pur implements Serializable {
     /**
      * 采购表的id,主键
      */
-    @TableId
+    @TableId(value = "pur_id",type = IdType.AUTO)
     private Integer pur_id;
 
     /**
@@ -37,7 +35,7 @@ public class Pur implements Serializable {
      * 以json格式存储
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<HctypeRecord> hctypeRecord_list;
+    private List<HctypeRecord> hctype_list;
 
     /**
      * 采购总价
@@ -83,7 +81,7 @@ public class Pur implements Serializable {
         Pur other = (Pur) that;
         return (this.getPur_id() == null ? other.getPur_id() == null : this.getPur_id().equals(other.getPur_id()))
             && (this.getUser_id() == null ? other.getUser_id() == null : this.getUser_id().equals(other.getUser_id()))
-            && (this.getHctypeRecord_list() == null ? other.getHctypeRecord_list() == null : this.getHctypeRecord_list().equals(other.getHctypeRecord_list()))
+            && (this.getHctype_list() == null ? other.getHctype_list() == null : this.getHctype_list().equals(other.getHctype_list()))
             && (this.getTotalprice() == null ? other.getTotalprice() == null : this.getTotalprice().equals(other.getTotalprice()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -97,7 +95,7 @@ public class Pur implements Serializable {
         int result = 1;
         result = prime * result + ((getPur_id() == null) ? 0 : getPur_id().hashCode());
         result = prime * result + ((getUser_id() == null) ? 0 : getUser_id().hashCode());
-        result = prime * result + ((getHctypeRecord_list() == null) ? 0 : getHctypeRecord_list().hashCode());
+        result = prime * result + ((getHctype_list() == null) ? 0 : getHctype_list().hashCode());
         result = prime * result + ((getTotalprice() == null) ? 0 : getTotalprice().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
@@ -114,7 +112,7 @@ public class Pur implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", pur_id=").append(pur_id);
         sb.append(", user_id=").append(user_id);
-        sb.append(", hcRecord_list=").append(hctypeRecord_list);
+        sb.append(", hcRecord_list=").append(hctype_list);
         sb.append(", totalprice=").append(totalprice);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);

@@ -13,29 +13,19 @@ import java.io.Serializable;
 public class AdminUpdateMyRequest implements Serializable {
 
     /**
-     * 用户姓名
-     */
-    private String admin_name;
-
-    /**
-     * 电话号码
-     */
-    private String admin_tel;
-
-    /**
-     * 用户密码
-     */
-    private String admin_pwd;
-
-    /**
      * 用户性别
      */
     private String admin_gender;
 
     /**
-     * 仓库名
+     * 用户工作单位
      */
-    private String warehouse_name;
+    private String admin_institution;
+
+    /**
+     * 用户姓名
+     */
+    private String admin_name;
 
     /**
      * 用户职位
@@ -43,9 +33,13 @@ public class AdminUpdateMyRequest implements Serializable {
     private String admin_position;
 
     /**
-     * 用户工作单位
+     * 电话号码
      */
-    private String admin_institution;
+    private String admin_tel;
+    /**
+     * 仓库名编号
+     */
+    private Integer wh_id;
 
 
     private static final long serialVersionUID = 1L;

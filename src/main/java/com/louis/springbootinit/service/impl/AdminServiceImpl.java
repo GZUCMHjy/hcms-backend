@@ -51,7 +51,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
         }
         // 2. 加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + adminPassword).getBytes());
+        // String encryptPassword = DigestUtils.md5DigestAsHex((SALT + adminPassword).getBytes());
         // 查询用户是否存在
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("admin_acct", adminAccount);
@@ -65,12 +65,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
         }
         String admin_pwd = admin.getAdmin_pwd();
         // 校验密码
-        if(!admin_pwd.equals(encryptPassword)){
+        if(!admin_pwd.equals(adminPassword)){
             loginAdminVO.setStatus(LoginStatusEnum.PASSWORD_ERROR.getCode());
             return loginAdminVO;
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, admin);
+
         return this.getLoginAdminVO(admin);
     }
 

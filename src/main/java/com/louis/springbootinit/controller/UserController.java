@@ -89,15 +89,15 @@ public class UserController {
         }
         String user_name = userRegisterRequest.getUser_name();
         String user_pwd = userRegisterRequest.getUser_pwd();
-        String check_pwd = userRegisterRequest.getCheck_pwd();
+        String wh_name = userRegisterRequest.getWh_name();
         String user_institution = userRegisterRequest.getUser_institution();
         String user_tel = userRegisterRequest.getUser_tel();
         String user_gender = userRegisterRequest.getUser_gender();
         // 校验判空
-        if (StringUtils.isAnyBlank(user_pwd, check_pwd,user_institution,user_tel,user_name)) {
+        if (StringUtils.isAnyBlank(user_pwd, wh_name,user_institution,user_tel,user_name)) {
             return null;
         }
-        long result = userService.userRegister(user_pwd,check_pwd,user_institution,user_tel,user_gender,user_name);
+        long result = userService.userRegister(user_pwd,wh_name,user_institution,user_tel,user_gender,user_name);
         return ResultUtils.success(result);
     }
 
@@ -121,7 +121,13 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginUserVO loginUserVO = userService.userLogin(user_acct, user_pwd, request);
-        return ResultUtils.success(loginUserVO,"登录成功");
+        if(loginUserVO.getStatus() == -1){
+            return ResultUtils.success(loginUserVO,"密码错误");
+        }
+        if(loginUserVO.getStatus() == 0){
+            return ResultUtils.success(loginUserVO,"账号不存在");
+        }
+        return ResultUtils.success(loginUserVO,"登陆成功");
     }
 
     /**

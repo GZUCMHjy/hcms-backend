@@ -7,9 +7,11 @@ import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.mapper.UserMapper;
 import com.louis.springbootinit.model.entity.User;
+import com.louis.springbootinit.model.entity.Wh;
 import com.louis.springbootinit.model.enums.LoginStatusEnum;
 import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.service.UserService;
+import com.louis.springbootinit.service.WhService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +34,9 @@ import static com.louis.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService {
 
+    @Resource
+    private WhService whService;
+
 
     /**
      * 盐值，混淆密码
@@ -39,9 +44,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "hcms";
 
     @Override
-    public long userRegister(String user_pwd, String check_pwd,String user_institution,String user_tel,String user_gender,String user_name) {
+    public long userRegister(String user_pwd, String wh_name,String user_institution,String user_tel,String user_gender,String user_name) {
         // 1. 校验
-        if (StringUtils.isAnyBlank(user_pwd, check_pwd,user_tel,user_institution,user_name)) {
+        if (StringUtils.isAnyBlank(user_pwd, wh_name,user_tel,user_institution,user_name)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if(user_tel.length() != 11){
@@ -53,10 +58,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user_pwd.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
-        // 密码和校验密码相同
-        if (!user_pwd.equals(check_pwd)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
-        }
         synchronized (user_tel.intern()) {
             // 账户不能重复
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -65,12 +66,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             if (count > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
+            QueryWrapper<Wh> whQueryWrapper = new QueryWrapper<Wh>();
+            whQueryWrapper.eq("wh_name",wh_name);
+            Wh one = whService.getOne(whQueryWrapper);
+            if(one == null){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无实验室");
+            }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + user_pwd).getBytes());
             // 3. 插入数据
             User user = new User();
+            user.setUser_institution(user_institution);
+            user.setUser_name(user_name);
+            user.setUser_gender(user_gender);
             user.setUser_tel(user_tel);
             user.setUser_acct(user_tel);
+            user.setLab_id(one.getWh_id());
             user.setUser_pwd(encryptPassword);
             boolean saveResult = this.save(user);
             if (!saveResult) {
