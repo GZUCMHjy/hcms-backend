@@ -2,9 +2,10 @@ package com.louis.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.louis.springbootinit.model.dto.HcTypeAddRequest;
+import com.louis.springbootinit.model.dto.HcIb.IbSearchByHcNameRequest;
 import com.louis.springbootinit.model.entity.Hctype;
 import com.louis.springbootinit.model.vo.HcTypeInfoVO;
-import com.louis.springbootinit.model.vo.HcTypeListVO;
+import com.louis.springbootinit.model.vo.HctypeResListVO;
 
 import java.util.List;
 
@@ -19,5 +20,5 @@ public interface HctypeService extends IService<Hctype> {
 
     boolean addHcType(HcTypeAddRequest hcTypeAddRequest);
 
-    List<HcTypeListVO> getHcTypeListInfo(String hc_name);
+    HctypeResListVO getHcTypeListInfo(IbSearchByHcNameRequest hctypeSearchRequest);
 }

@@ -48,7 +48,9 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
         List<HctypeRecord> hctypeRecord_list = new ArrayList<>(hctypeRecords.size());
         // 初始化采购总价为0
         BigDecimal totolp = new BigDecimal(0);
-        hctypeRecords.stream().forEach(hctypeRecord -> {
+        long sum =0;
+        for(HctypeRecord hctypeRecord : hctypeRecords){
+
             HctypeRecord addHcTypeRecord = new HctypeRecord();
             // 记录采购的危化品类型的名称和规格
             addHcTypeRecord.setHctype_name(hctypeRecord.getHctype_name());
@@ -59,12 +61,13 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
             // 计算单个危化品类型总价格
             BigDecimal tempPrice = hctypeRecord.getPrice().multiply(new BigDecimal(hctypeRecord.getCount()));
             // 计算采购总价
-            totolp.add(tempPrice);
+            BigDecimal add = totolp.add(tempPrice);
+            sum += add.longValue();
             // 记录采购的危化品类型列表
             hctypeRecord_list.add(addHcTypeRecord);
-        });
+        }
         pur.setHctype_list(hctypeRecord_list);
-        pur.setTotalprice(totolp);
+        pur.setTotalprice(new BigDecimal(sum));
         pur.setFile(purchasePostRequest.getFile());
         pur.setCreateTime(new Date(System.currentTimeMillis()));
         pur.setUpdateTime(new Date(System.currentTimeMillis()));

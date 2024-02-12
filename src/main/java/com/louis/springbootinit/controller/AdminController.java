@@ -1,14 +1,14 @@
 package com.louis.springbootinit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.louis.springbootinit.common.BaseResponse;
-import com.louis.springbootinit.common.DeleteRequest;
-import com.louis.springbootinit.common.ErrorCode;
-import com.louis.springbootinit.common.ResultUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.louis.springbootinit.common.*;
 import com.louis.springbootinit.config.WxOpenConfig;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
+import com.louis.springbootinit.model.dto.HcIb.IbSearchByIbIdRequest;
 import com.louis.springbootinit.model.dto.HcTypeAddRequest;
+import com.louis.springbootinit.model.dto.HcIb.IbSearchByHcNameRequest;
 import com.louis.springbootinit.model.dto.Record.HcAnotherIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
@@ -216,7 +216,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/addIbBaseRecords")
-    public BaseResponse<Boolean> addIbRecords(@RequestBody IbRecordAddRequest ibRecordRequest, HttpServletRequest request){
+    public BaseResponse<IbBaseRecordVO> addIbRecords(@RequestBody IbRecordAddRequest ibRecordRequest, HttpServletRequest request){
         if(ibRecordRequest == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
         }
@@ -238,11 +238,8 @@ public class AdminController {
                 ib_content,whstart_name,whend_name,ib_purpose,ib_content)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
         }
-        boolean b = ibService.addIbRecords(ibRecordRequest);
-        if(!b){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"入库失败");
-        }
-        return ResultUtils.success(true);
+        IbBaseRecordVO b = ibService.addIbRecords(ibRecordRequest);
+        return ResultUtils.success(b);
     }
 
     /**
@@ -324,14 +321,14 @@ public class AdminController {
     }
 
     /**
-     * 获取此次入库危化品
-     * @param ib_id
+     * 获取此次入库危化品记录
+     * @param ibSearchRequest
      * @return
      */
-    @GetMapping("/getHcIbInfo/{ib_id}")
-    public BaseResponse<IbRecordVO> getIbRecordsInfo(@PathVariable Integer ib_id){
-        ThrowUtils.throwIf(ib_id == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
-        IbRecordVO ibRecordsInfo = ibService.getIbRecordsInfo(ib_id);
+    @PostMapping("/getHcIbListInfo")
+    public BaseResponse<IbRecordVO> getHcIbListInfo(@RequestBody IbSearchByIbIdRequest ibSearchRequest){
+        ThrowUtils.throwIf(ibSearchRequest == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        IbRecordVO ibRecordsInfo = ibService.getIbRecordsInfo(ibSearchRequest);
         return ResultUtils.success(ibRecordsInfo);
     }
 
@@ -340,7 +337,7 @@ public class AdminController {
      * @param hc_name
      * @return
      */
-    @GetMapping("/getHcIbInfo/{hc_name}")
+    @GetMapping("/getHcTypeInfo/{hc_name}")
     public BaseResponse<List<HcTypeInfoVO>> getHcTypeInfo(@PathVariable String hc_name){
         ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
         List<HcTypeInfoVO> hcTypesInfo = hctypeService.getHcTypeInfo(hc_name);
@@ -374,24 +371,45 @@ public class AdminController {
 
     /**
      * 获取危化品类型列表
-     * @param hc_name
+     * @param hctypeSearchRequest
      * @return
      */
-    @GetMapping("/getHctypeList/{hc_name}")
-    public BaseResponse<List<HcTypeListVO>> getHctypeList(@PathVariable String hc_name){
-        ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
-        List<HcTypeListVO> hcTypesListInfo = hctypeService.getHcTypeListInfo(hc_name);
-        return ResultUtils.success(hcTypesListInfo);
+    @PostMapping("/getHctypeList")
+    public BaseResponse<HctypeResListVO> getHctypeList(@RequestBody IbSearchByHcNameRequest hctypeSearchRequest){
+        ThrowUtils.throwIf(hctypeSearchRequest == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        HctypeResListVO hcTypeListInfo = hctypeService.getHcTypeListInfo(hctypeSearchRequest);
+        return ResultUtils.success(hcTypeListInfo);
     }
 
     /**
      * 获取所有采购记录
      * @return
      */
-    @GetMapping("/getAllpurchase")
-    public BaseResponse<List<Pur>> getAllpurchase(){
-        List<Pur> list = purService.list();
-        return ResultUtils.success(list);
+    @PostMapping("/getAllpurchase")
+    public BaseResponse<PurListVO> getAllpurchase(@RequestBody PageRequest pageRequest){
+        // 1. 获取当前页和每页条数
+        long page = pageRequest.getPage();
+        long limit = pageRequest.getLimit();
+        Page<Pur> purPage = new Page<>();
+        purPage.setSize(limit);
+        purPage.setCurrent(page);
+        List<Pur> purList = purService.list();
+        purPage.setRecords(purList);
+        // 2. 进行分页操作
+        Page<Pur> pageRes = purService.page(purPage);
+        // 3. 返回封装类
+        PurListVO purListVO = new PurListVO();
+        purListVO.setCount(purList.size());
+        List<Pur> records = pageRes.getRecords();
+        // 4. 遍历添加字段
+        for(Pur record : records){
+            Integer user_id = record.getUser_id();
+            User byId = userService.getById(user_id);
+            record.setUser_name(byId.getUser_name());
+            record.setUser_tel(byId.getUser_tel());
+        }
+        purListVO.setList(records);
+        return ResultUtils.success(purListVO);
     }
 
 

@@ -1,6 +1,7 @@
 package com.louis.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.louis.springbootinit.common.ErrorCode;
@@ -9,12 +10,14 @@ import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.HcibMapper;
 import com.louis.springbootinit.mapper.IbMapper;
+import com.louis.springbootinit.model.dto.HcIb.IbSearchByIbIdRequest;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.QuitOrEndRequest;
 import com.louis.springbootinit.model.dto.purchase.HctypeRecord;
 import com.louis.springbootinit.model.entity.*;
 import com.louis.springbootinit.model.vo.HcListVO;
+import com.louis.springbootinit.model.vo.IbBaseRecordVO;
 import com.louis.springbootinit.model.vo.IbRecordVO;
 import com.louis.springbootinit.service.*;
 import org.apache.poi.ss.formula.functions.T;
@@ -65,7 +68,7 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
      */
     @Override
     @Transactional
-    public boolean addIbRecords(IbRecordAddRequest ibRecordRequest) {
+    public IbBaseRecordVO addIbRecords(IbRecordAddRequest ibRecordRequest) {
         if(ibRecordRequest == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数错误");
         }
@@ -94,13 +97,23 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         ib.setAdminb_id(adminb_id);
         ib.setWhstart_id(ibRecordRequest.getWhstart_id());
         ib.setWhend_id(ibRecordRequest.getWhend_id());
-        ib.setHctype_id(ib.getHctype_id());
+        ib.setHctype_id(ibRecordRequest.getHctype_id());
+        ib.setIb_time(new Date(System.currentTimeMillis()));
         int insert = this.baseMapper.insert(ib);
 
-        if(insert == 0 ){
+        if(insert == 0){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"入库失败");
         }
-        return false;
+        Hctype byId = hctypeService.getById(ibRecordRequest.getHctype_id());
+        ThrowUtils.throwIf(byId==null,ErrorCode.PARAMS_ERROR,"查无类型");
+
+        IbBaseRecordVO ibBaseRecordVO = new IbBaseRecordVO();
+        ibBaseRecordVO.setIb_id(ib.getIb_id());
+        ibBaseRecordVO.setHc_name(byId.getHc_name());
+        ibBaseRecordVO.setHctype_id(ibRecordRequest.getHctype_id());
+        ibBaseRecordVO.setHc_unit(byId.getHc_unit());
+        ibBaseRecordVO.setHc_spec(Integer.parseInt(byId.getHc_spec()));
+        return ibBaseRecordVO;
     }
 
     /**
@@ -170,11 +183,14 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
 
     /**
      * 获取此次入库危化品
-     * @param ib_id
+     * @param ibSearchByIbIdRequest
      * @return
      */
     @Override
-    public IbRecordVO getIbRecordsInfo(Integer ib_id) {
+    public IbRecordVO getIbRecordsInfo(IbSearchByIbIdRequest ibSearchByIbIdRequest) {
+        Integer ib_id = ibSearchByIbIdRequest.getIb_id();
+        long limit = ibSearchByIbIdRequest.getLimit();
+        long page = ibSearchByIbIdRequest.getPage();
         if( ib_id == null){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"参数不能为空");
         }
@@ -184,15 +200,21 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         if(byId == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无入库记录");
         }
-        // 获取危化品入库记录列表
+        // 获取未分页的危化品入库记录列表
         QueryWrapper<Hcib> hcibQueryWrapper = new QueryWrapper<>();
         hcibQueryWrapper.eq("ib_id",ib_id);
         List<Hcib> hcibs = hcibMapper.selectList(hcibQueryWrapper);
-
-        List<HcListVO> hcListVOS = new ArrayList<>(hcibs.size());
+        // 获取分页的危化品入库记录列表
+        Page<Hcib> hcibPage = new Page<Hcib>();
+        hcibPage.setCurrent(page);
+        hcibPage.setSize(limit);
+        Page<Hcib> hcibPageRes = hcibMapper.selectPage(hcibPage, hcibQueryWrapper);
+        // 分页结果
+        List<Hcib> records = hcibPageRes.getRecords();
+        List<HcListVO> hcListVOS = new ArrayList<>(records.size());
         IbRecordVO ibRecordVO = new IbRecordVO();
         ibRecordVO.setIb_id(ib_id);
-        for(Hcib hcib : hcibs){
+        for(Hcib hcib : records){
             Integer hc_id = hcib.getHc_id();
             Hc hc = hcService.getById(hc_id);
             Integer hctype_id = hc.getHctype_id();
@@ -218,7 +240,8 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
             hcListVO.setIb_time(byId.getIb_time());
             hcListVOS.add(hcListVO);
         }
-        ibRecordVO.setHc_list(hcListVOS);
+        ibRecordVO.setList(hcListVOS);
+        ibRecordVO.setCount(hcibs.size());
         return ibRecordVO;
     }
 

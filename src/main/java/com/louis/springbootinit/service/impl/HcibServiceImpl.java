@@ -61,9 +61,17 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
         ThrowUtils.throwIf(byId == null, ErrorCode.NOT_FOUND_ERROR);
         // 更新入库记录表中的入库数量
         byId.setIb_nums(batch);
+        int wh_remnant = 0;
         // 更新入库记录表的入库后的余量
-        int wh_remnant = Integer.parseInt(byId.getWh_remnant());
-        wh_remnant +=batch * hcIbRecordAddRequest.getHc_remnant();
+        try{
+            wh_remnant = Integer.parseInt(byId.getWh_remnant());
+            wh_remnant +=batch * hcIbRecordAddRequest.getHc_remnant();
+        }catch (Exception e){
+            // 如果空指针异常 说明第一次采购引进该危化品
+            wh_remnant = hcIbRecordAddRequest.getHc_remnant() * batch;
+        }
+
+
         byId.setIb_quantity(String.valueOf(batch * hcIbRecordAddRequest.getHc_remnant()));
         byId.setWh_remnant(String.valueOf(wh_remnant));
         // 更新修改时间
@@ -144,6 +152,7 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
      * @return
      */
     @Override
+    @Transactional
     public int addHcAnotherIbRecords(HcAnotherIbRecordAddRequest hcAnotherIbRecordAddRequest) {
         ThrowUtils.throwIf(hcAnotherIbRecordAddRequest == null,ErrorCode.PARAMS_ERROR);
         Integer hc_id = hcAnotherIbRecordAddRequest.getHc_id();
@@ -173,6 +182,8 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
         byId.setIb_nums(1);
         // 入库总量等于一瓶最小单位
         byId.setIb_quantity(hcAnotherIbRecordAddRequest.getHc_remnant().toString());
+        boolean b = ibService.updateById(byId);
+        ThrowUtils.throwIf(!b,ErrorCode.SYSTEM_ERROR,"更新入库记录失败");
         return ib_id;
     }
 }

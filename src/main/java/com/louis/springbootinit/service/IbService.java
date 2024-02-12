@@ -1,11 +1,13 @@
 package com.louis.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.louis.springbootinit.model.dto.HcIb.IbSearchByIbIdRequest;
 import com.louis.springbootinit.model.dto.Record.HcIbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.IbRecordAddRequest;
 import com.louis.springbootinit.model.dto.Record.QuitOrEndRequest;
 import com.louis.springbootinit.model.entity.Ib;
 import com.louis.springbootinit.model.entity.Pur;
+import com.louis.springbootinit.model.vo.IbBaseRecordVO;
 import com.louis.springbootinit.model.vo.IbRecordVO;
 
 import java.util.List;
@@ -17,9 +19,9 @@ import java.util.List;
 */
 public interface IbService extends IService<Ib> {
 
-    boolean  addIbRecords(IbRecordAddRequest ibRecordRequest);
+    IbBaseRecordVO addIbRecords(IbRecordAddRequest ibRecordRequest);
 
     boolean cancelOrEndIb(QuitOrEndRequest quitOrEndRequest);
 
-    IbRecordVO getIbRecordsInfo(Integer ib_id);
+    IbRecordVO getIbRecordsInfo(IbSearchByIbIdRequest ibSearchByIbIdRequest);
 }

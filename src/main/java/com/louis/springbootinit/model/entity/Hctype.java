@@ -18,7 +18,7 @@ public class Hctype implements Serializable {
     /**
      * 危化品类型id,主键
      */
-    @TableId
+    @TableId(value = "hctype_id",type = IdType.AUTO)
     private Integer hctype_id;
 
     /**

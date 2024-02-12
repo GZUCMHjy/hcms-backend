@@ -51,22 +51,8 @@ public class IbRecordAddRequest implements Serializable {
     private Integer teacher_id;
 
     /**
-     * 仓库管理员a
+     * 危化品类型id
      */
-    private String admina_name;
-    /**
-     * 仓库管理员a
-     */
-    private String adminb_name;
-
-    /**
-     * 本人
-     */
-    private String user_name;
-
-    /**
-     * 陪同老师
-     */
-    private String teacher_name;
+    private Integer hctype_id;
 
 }

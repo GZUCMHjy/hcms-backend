@@ -1,5 +1,6 @@
 package com.louis.springbootinit.model.vo;
 
+import com.louis.springbootinit.common.PageRequest;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,9 +14,10 @@ import java.util.List;
  * @date 2024/1/27 14:54
  */
 @Data
-public class IbRecordVO implements Serializable {
+public class IbRecordVO extends PageRequest implements Serializable {
 
     private static final long serialVersionUID = 1447694672806258659L;
     private Integer ib_id;
-    private List<HcListVO> hc_list;
+    private Integer count;
+    private List<HcListVO> list;
 }

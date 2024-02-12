@@ -63,6 +63,13 @@ public class Pur implements Serializable {
      * 文件url
      */
     private String file;
+    @TableField(exist = false)
+    private String user_name;
+    @TableField(exist = false)
+    private String user_tel;
+
+    @TableField(exist = false)
+    private Integer count;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
