@@ -128,11 +128,8 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         ThrowUtils.throwIf(byId == null,ErrorCode.PARAMS_ERROR,"查无入库记录");
         if(quitOrEndRequest.getEnd_cancel() == 1){
             // 取消(逻辑删除入库记录)
-            byId.setIsDelete(1);
-            boolean b = this.updateById(byId);
-            if(!b){
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"取消失败");
-            }
+            int i = this.baseMapper.deleteById(byId.getIb_id());
+            ThrowUtils.throwIf(i==0,ErrorCode.PARAMS_ERROR,"取消失败");
         }
         // 删除危化品表
         // 获取危化品类型id
@@ -142,17 +139,14 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         if( hcs .size() == 1){
             // 普通入库
             Hc targetHc =  hcs.get(0);
-            targetHc.setIsDelete(1);
-            boolean b = hcService.updateById(targetHc);
-            ThrowUtils.throwIf(b, ErrorCode.SYSTEM_ERROR,"取消失败");
+            boolean b = hcService.removeById(targetHc.getHc_id());
+            ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR,"取消失败");
         }else{
             // 采购入库
             try{
                 hcs.forEach(hc ->{
-                    hc.setIsDelete(1);
+                    hcService.removeById(hc.getHc_id());
                 });
-                // 批量修改
-                hcService.updateBatchById(hcs);
             }catch (BusinessException e){
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,e.getCause().toString());
             }
@@ -164,15 +158,13 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         if( hcibs.size() == 1){
             // 普通入库
             Hcib hcib = hcibs.get(0);
-            hcib.setIsDelete(1);
-            int b = hcibMapper.updateById(hcib);
-            ThrowUtils.throwIf(b == 0, ErrorCode.SYSTEM_ERROR,"取消失败");
+            int i = hcibMapper.deleteById(hcib.getHcib_id());
+            ThrowUtils.throwIf(i == 0, ErrorCode.SYSTEM_ERROR,"取消失败");
         }else{
             // 采购入库
             try{
                 hcibs.forEach(hcib ->{
-                    hcib.setIsDelete(1);
-                    hcibMapper.updateById(hcib);
+                    int i = hcibMapper.deleteById(hcib.getHcib_id());
                 });
             }catch (BusinessException e){
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,e.getCause().toString());
