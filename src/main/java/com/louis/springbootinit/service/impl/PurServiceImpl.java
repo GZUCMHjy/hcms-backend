@@ -69,8 +69,6 @@ public class PurServiceImpl extends ServiceImpl<PurMapper, Pur>
         pur.setHctype_list(hctypeRecord_list);
         pur.setTotalprice(new BigDecimal(sum));
         pur.setFile(purchasePostRequest.getFile());
-        pur.setCreateTime(new Date(System.currentTimeMillis()));
-        pur.setUpdateTime(new Date(System.currentTimeMillis()));
         // 插入一条采购记录
         int success = purMapper.insert(pur);
         if(success == 0){

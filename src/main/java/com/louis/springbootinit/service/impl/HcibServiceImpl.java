@@ -74,8 +74,6 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
 
         byId.setIb_quantity(String.valueOf(batch * hcIbRecordAddRequest.getHc_remnant()));
         byId.setWh_remnant(String.valueOf(wh_remnant));
-        // 更新修改时间
-        byId.setUpdataTime(new Date(System.currentTimeMillis()));
         // 更新数据
         boolean isSuccess = ibService.updateById(byId);
         ThrowUtils.throwIf(!isSuccess, ErrorCode.SYSTEM_ERROR,"更新入库记录表数据异常");
