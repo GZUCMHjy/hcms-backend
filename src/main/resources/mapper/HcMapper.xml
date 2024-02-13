@@ -23,7 +23,8 @@
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
-        <result property="hc_enname" column="hc_enname" jdbcType="VARCHAR"/>
+            <result property="hc_enname" column="hc_enname" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -32,6 +33,6 @@
         profile,producationdate,cas,
         hctype_id,shelflife,pur_id,
         borrowed,wh_id,status,
-        createTime,updateTime,isDelete,hc_enname
+        createTime,updateTime,isDelete,hc_enname,version
     </sql>
 </mapper>

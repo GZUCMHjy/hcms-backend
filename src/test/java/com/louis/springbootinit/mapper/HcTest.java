@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @date 2024/2/9 9:32
  */
 @SpringBootTest
-public class AddHcTest {
+public class HcTest {
     @Resource
     private HcMapper hcMapper;
     @Test
@@ -53,4 +53,11 @@ public class AddHcTest {
         System.out.println(max);
     }
 
+
+    @Test
+    void testOptimisticLock(){
+        Hc hc = hcMapper.selectById(6);
+        hc.setHc_name("这是第一个测试的6号");
+        hcMapper.updateById(hc);
+    }
 }

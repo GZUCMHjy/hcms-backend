@@ -1,5 +1,6 @@
 package com.louis.springbootinit.model.entity;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
@@ -23,71 +24,85 @@ public class Hc implements Serializable {
     /**
      * 危化品的物理状态(固体,液体,气体)
      */
+    @ExcelProperty("危化品的物理状态(固体,液体,气体)")
     private String states;
 
     /**
      * 危化品的名称
      */
+    @ExcelProperty("危化品的名称")
     private String hc_name;
 
     /**
      * 危化品的分子式
      */
+    @ExcelProperty("分子式")
     private String hc_formula;
 
     /**
      * 危化品的余量
      */
+    @ExcelProperty("余量")
     private Integer hc_remnant;
 
     /**
      * 危化品单价
      */
+    @ExcelProperty("单价")
     private BigDecimal price;
 
     /**
      * 危化品的简介
      */
+    @ExcelProperty("简介")
     private String profile;
 
     /**
      * 危化品的生产日期
      */
+    @ExcelProperty("生产日期")
     private Date producationdate;
 
     /**
      * 危化品的cas编号
      */
+    @ExcelProperty("cas编号")
     private String cas;
 
     /**
      * 危化品类型id,外键
      */
+    @ExcelProperty("危化品类型id")
     private Integer hctype_id;
 
     /**
      * 危化品的保质期,以月为单位
      */
+    @ExcelProperty("保质期")
     private Integer shelflife;
 
     /**
      * 采购表id,外键
      */
+    @ExcelProperty("采购表id")
     private Integer pur_id;
 
     /**
      * 危化品是否借用,用以判断是否达到最大存储期限(一年)
      */
+    @ExcelProperty("是否借用")
     private Integer borrowed;
 
     /**
      * 所在仓库id,外键
      */
+    @ExcelProperty("仓库id")
     private Integer wh_id;
 
     /**
      * 危化品所处状态,枚举(在存,运输,使用)
      */
+    @ExcelProperty("状态")
     private String status;
 
     /**
@@ -95,6 +110,7 @@ public class Hc implements Serializable {
      * 自动填充（添加时自动填充创建时间）
      */
     @TableField(fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
     private Date createTime;
 
     /**
@@ -102,15 +118,22 @@ public class Hc implements Serializable {
      * 只是添加不会生效
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("更新时间")
     private Date updateTime;
 
     /**
      * 英文名
      */
+    @ExcelProperty("英文名")
     private String hc_enname;
 
+    /**
+     * 生产商
+     */
+    @ExcelProperty("生产商")
     private String hc_productor;
 
+    // 乐观锁的版本号
     @Version
     private Integer version;
 
@@ -121,6 +144,7 @@ public class Hc implements Serializable {
     private Integer isDelete;
 
     @TableField(exist = false)
+    @ExcelProperty("是否删除")
     private static final long serialVersionUID = 1L;
 
     @Override
