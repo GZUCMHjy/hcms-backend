@@ -111,6 +111,9 @@ public class Hc implements Serializable {
 
     private String hc_productor;
 
+    @Version
+    private Integer version;
+
     /**
      * 逻辑删除
      */

@@ -13,12 +13,14 @@ import java.util.Date;
  */
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
+    // 添加时执行
     @Override
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName("createTime",new Date(),metaObject);
         this.setFieldValByName("updateTime",new Date(),metaObject);
     }
 
+    // 修改时执行
     @Override
     public void updateFill(MetaObject metaObject) {
         this.setFieldValByName("updateTime",new Date(),metaObject);
