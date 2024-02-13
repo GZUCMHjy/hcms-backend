@@ -86,13 +86,17 @@ public class Ib implements Serializable {
 
     /**
      * 记录创建时间
+     * 自动填充（添加时自动填充创建时间）
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 记录更新时间
+     * 只是添加不会生效
      */
-    private Date updataTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
 
     /**
      * 逻辑删除
@@ -130,7 +134,7 @@ public class Ib implements Serializable {
             && (this.getIb_content() == null ? other.getIb_content() == null : this.getIb_content().equals(other.getIb_content()))
             && (this.getIb_purpose() == null ? other.getIb_purpose() == null : this.getIb_purpose().equals(other.getIb_purpose()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdataTime() == null ? other.getUpdataTime() == null : this.getUpdataTime().equals(other.getUpdataTime()))
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()));
     }
 
@@ -153,7 +157,7 @@ public class Ib implements Serializable {
         result = prime * result + ((getIb_content() == null) ? 0 : getIb_content().hashCode());
         result = prime * result + ((getIb_purpose() == null) ? 0 : getIb_purpose().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        result = prime * result + ((getUpdataTime() == null) ? 0 : getUpdataTime().hashCode());
+        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDelete() == null) ? 0 : getIsDelete().hashCode());
         return result;
     }
@@ -179,7 +183,7 @@ public class Ib implements Serializable {
         sb.append(", ib_content=").append(ib_content);
         sb.append(", ib_purpose=").append(ib_purpose);
         sb.append(", createTime=").append(createTime);
-        sb.append(", updataTime=").append(updataTime);
+        sb.append(", updataTime=").append(updateTime);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

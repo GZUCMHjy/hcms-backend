@@ -141,8 +141,9 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
             Hc targetHc =  hcs.get(0);
             boolean b = hcService.removeById(targetHc.getHc_id());
             ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR,"取消失败");
-        }else{
-            // 采购入库
+        }
+        else {
+            // 采购入库(包括了 size等于0和大于1的情况)
             try{
                 hcs.forEach(hc ->{
                     hcService.removeById(hc.getHc_id());

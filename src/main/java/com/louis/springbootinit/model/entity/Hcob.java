@@ -1,9 +1,7 @@
 package com.louis.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -38,12 +36,16 @@ public class Hcob implements Serializable {
 
     /**
      * 记录创建时间
+     * 自动填充（添加时自动填充创建时间）
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 记录更新时间
+     * 只是添加不会生效
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     /**

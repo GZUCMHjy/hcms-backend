@@ -1,9 +1,7 @@
 package com.louis.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -93,13 +91,17 @@ public class Ob implements Serializable {
 
     /**
      * 记录创建时间
+     * 自动填充（添加时自动填充创建时间）
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 记录更新时间
+     * 只是添加不会生效
      */
-    private Date updataTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
 
     /**
      * 逻辑删除
@@ -138,7 +140,7 @@ public class Ob implements Serializable {
             && (this.getRanout() == null ? other.getRanout() == null : this.getRanout().equals(other.getRanout()))
             && (this.getOb_purpose() == null ? other.getOb_purpose() == null : this.getOb_purpose().equals(other.getOb_purpose()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdataTime() == null ? other.getUpdataTime() == null : this.getUpdataTime().equals(other.getUpdataTime()))
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()));
     }
 
@@ -162,7 +164,7 @@ public class Ob implements Serializable {
         result = prime * result + ((getRanout() == null) ? 0 : getRanout().hashCode());
         result = prime * result + ((getOb_purpose() == null) ? 0 : getOb_purpose().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        result = prime * result + ((getUpdataTime() == null) ? 0 : getUpdataTime().hashCode());
+        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDelete() == null) ? 0 : getIsDelete().hashCode());
         return result;
     }
@@ -189,7 +191,7 @@ public class Ob implements Serializable {
         sb.append(", ranout=").append(ranout);
         sb.append(", ob_purpose=").append(ob_purpose);
         sb.append(", createTime=").append(createTime);
-        sb.append(", updataTime=").append(updataTime);
+        sb.append(", updataTime=").append(updateTime);
         sb.append(", isDelete=").append(isDelete);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

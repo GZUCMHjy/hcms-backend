@@ -61,12 +61,16 @@ public class User implements Serializable {
 
     /**
      * 记录创建时间
+     * 自动填充（添加时自动填充创建时间）
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 记录更新时间
+     * 只是添加不会生效
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     /**
