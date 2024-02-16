@@ -125,6 +125,7 @@ public class HctypeServiceImpl extends ServiceImpl<HctypeMapper, Hctype>
         hctypeResListVO.setCount(hctypes.size());
         return hctypeResListVO;
     }
+
 }
 
 

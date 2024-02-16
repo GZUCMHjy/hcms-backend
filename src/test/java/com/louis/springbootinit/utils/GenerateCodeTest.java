@@ -13,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author louis
@@ -27,6 +29,9 @@ public class GenerateCodeTest {
     private HcService hcService;
     @Resource
     private HctypeService hctypeService;
+
+    @Resource
+    private AliOssUtil aliOssUtil;
     @Test
     public void createCode(){
         String token = "I am your father!";
@@ -57,6 +62,13 @@ public class GenerateCodeTest {
         map.put("保质期",hc.getShelflife());
         map.put("入库时间",hc.getCreateTime());
         String mapStr = map.toString();
-        System.out.println("这是字符串化后的map键值对"+mapStr);
+        // 生成二维码图片
+        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
+        String originalFilename = generate.getName();
+        //在oss中存储名字就是UUID + 文件的后缀名
+        String objectName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
+        byte[] bytes = generate.toString().getBytes();
+        // 调用阿里云服务（生成图片url）
+        System.out.println("这是字符串化后的map键值对"+aliOssUtil.upload(bytes, originalFilename));
     }
 }
