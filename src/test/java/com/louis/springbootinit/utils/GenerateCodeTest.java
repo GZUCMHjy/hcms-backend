@@ -1,52 +1,41 @@
-package com.louis.springbootinit.service.impl;
+package com.louis.springbootinit.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.louis.springbootinit.common.ErrorCode;
-import com.louis.springbootinit.controller.FileController;
 import com.louis.springbootinit.exception.BusinessException;
-import com.louis.springbootinit.exception.ThrowUtils;
-import com.louis.springbootinit.mapper.HcMapper;
 import com.louis.springbootinit.model.entity.Hc;
 import com.louis.springbootinit.model.entity.Hctype;
 import com.louis.springbootinit.service.HcService;
 import com.louis.springbootinit.service.HctypeService;
-import com.louis.springbootinit.utils.AliOssUtil;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
-* @author 35064
-* @description 针对表【hc】的数据库操作Service实现
-* @createDate 2024-01-23 11:00:38
-*/
-@Service
-public class HcServiceImpl extends ServiceImpl<HcMapper, Hc>
-    implements HcService {
+ * @author louis
+ * @version 1.0
+ * @date 2024/2/16 17:40
+ */
+@SpringBootTest
+public class GenerateCodeTest {
+    @Resource
+    private HcService hcService;
     @Resource
     private HctypeService hctypeService;
-
-
-    @Resource
-    private AliOssUtil aliOssUtil;
-    /**
-     * 生成危化品信息二维码
-     * @param hc_id
-     * @return
-     */
-    @Override
-    public String getHcQRCode(Integer hc_id) {
-        Hc hc = this.baseMapper.selectById(hc_id);
-        ThrowUtils.throwIf(hc== null ,ErrorCode.PARAMS_ERROR);
+    @Test
+    public void createCode(){
+        String token = "I am your father!";
+        // 生成指定内容对应的二维码到文件，宽和高都是300像素
+        QrCodeUtil.generate(token, 300, 300, FileUtil.file("d:/qrcode.jpg"));
+    }
+    @Test
+    public void getHcQRCode() {
+        Hc hc = hcService.getById(6);
         Integer hctype_id = hc.getHctype_id();
         QueryWrapper<Hctype> hctypeQueryWrapper = new QueryWrapper<>();
         hctypeQueryWrapper.eq("hctype_id",hctype_id);
@@ -68,17 +57,6 @@ public class HcServiceImpl extends ServiceImpl<HcMapper, Hc>
         map.put("保质期",hc.getShelflife());
         map.put("入库时间",hc.getCreateTime());
         String mapStr = map.toString();
-        // 生成二维码图片
-        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc%s.jpg", hc.getHc_id().toString()));
-        String originalFilename = generate.getName();
-        //在oss中存储名字就是UUID + 文件的后缀名
-        String objectName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        byte[] bytes = generate.toString().getBytes();
-        // 调用阿里云服务（生成图片url）
-        return aliOssUtil.upload(bytes, originalFilename);
+        System.out.println("这是字符串化后的map键值对"+mapStr);
     }
 }
-
-
-
-

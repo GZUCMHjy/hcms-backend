@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -54,9 +55,12 @@ public class AdminController {
 
     @Resource
     private HctypeService hctypeService;
+    @Resource
+    private HcService hcService;
 
     @Resource
     private PurService purService;
+
 
     @Resource
     private WxOpenConfig wxOpenConfig;
@@ -413,6 +417,17 @@ public class AdminController {
     }
 
 
+    /**
+     * 获取最小单位危化品二维码
+     * @param hc_id
+     * @return
+     */
+    @GetMapping("/getHcQRCode/{hc_id}")
+    public BaseResponse<String> getHcQRCode(@PathVariable Integer hc_id){
+        ThrowUtils.throwIf(hc_id == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
+        String hcQRCodeUrl = hcService.getHcQRCode(hc_id);
+        return ResultUtils.success(hcQRCodeUrl);
+    }
 //    /**
 //     * 分页获取管理员封装列表
 //     *

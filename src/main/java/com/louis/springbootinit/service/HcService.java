@@ -10,4 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface HcService extends IService<Hc> {
 
+    String getHcQRCode(Integer hc_id);
 }
