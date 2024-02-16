@@ -160,15 +160,17 @@ public class AdminController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Admin loginAdmin = adminService.getLoginAdmin(request);
-        QueryWrapper<Wh> whQueryWrapper = new QueryWrapper<>();
-        whQueryWrapper.eq("wh_id", adminUpdateMyRequest.getWh_id());
-        Integer wh_id = whService.getOne(whQueryWrapper).getWh_id();
-        Admin admin = new Admin();
-        BeanUtils.copyProperties(adminUpdateMyRequest, admin);
-//        admin.setWh_id(wh_id);
-//        admin.setAdmin_id(loginAdmin.getAdmin_id());
-        boolean result = adminService.updateById(admin);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        if(loginAdmin == null){
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"请重新登录");
+        }
+        loginAdmin.setAdmin_gender(adminUpdateMyRequest.getAdmin_gender());
+        loginAdmin.setAdmin_institution(adminUpdateMyRequest.getAdmin_institution());
+        loginAdmin.setAdmin_name(adminUpdateMyRequest.getAdmin_name());
+        loginAdmin.setAdmin_position(adminUpdateMyRequest.getAdmin_position());
+        loginAdmin.setAdmin_tel(adminUpdateMyRequest.getAdmin_tel());
+        loginAdmin.setWh_id(adminUpdateMyRequest.getWh_id());
+        boolean b = adminService.updateById(loginAdmin);
+        ThrowUtils.throwIf(!b, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
     /**

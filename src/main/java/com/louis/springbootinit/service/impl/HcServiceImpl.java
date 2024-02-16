@@ -69,7 +69,7 @@ public class HcServiceImpl extends ServiceImpl<HcMapper, Hc>
         map.put("入库时间",hc.getCreateTime());
         String mapStr = map.toString();
         // 生成二维码图片
-        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc%s.jpg", hc.getHc_id().toString()));
+        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
         String originalFilename = generate.getName();
         //在oss中存储名字就是UUID + 文件的后缀名
         String objectName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
