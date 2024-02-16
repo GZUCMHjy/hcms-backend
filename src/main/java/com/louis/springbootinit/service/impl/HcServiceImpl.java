@@ -4,12 +4,10 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.louis.springbootinit.common.ErrorCode;
-import com.louis.springbootinit.controller.FileController;
 import com.louis.springbootinit.exception.BusinessException;
-import com.louis.springbootinit.exception.ThrowUtils;
 import com.louis.springbootinit.mapper.HcMapper;
+import com.louis.springbootinit.mapper.HctypeMapper;
 import com.louis.springbootinit.model.entity.Hc;
 import com.louis.springbootinit.model.entity.Hctype;
 import com.louis.springbootinit.service.HcService;
@@ -20,33 +18,30 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 /**
-* @author 35064
-* @description 针对表【hc】的数据库操作Service实现
-* @createDate 2024-01-23 11:00:38
-*/
+ * @author louis
+ * @version 1.0
+ * @date 2024/2/16 21:24
+ */
 @Service
 public class HcServiceImpl extends ServiceImpl<HcMapper, Hc>
-    implements HcService {
+        implements HcService {
     @Resource
     private HctypeService hctypeService;
 
-
     @Resource
     private AliOssUtil aliOssUtil;
-    /**
-     * 生成危化品信息二维码
-     * @param hc_id
-     * @return
-     */
+
     @Override
-    public String getHcQRCode(Integer hc_id) {
-        Hc hc = this.baseMapper.selectById(hc_id);
-        ThrowUtils.throwIf(hc== null ,ErrorCode.PARAMS_ERROR);
+    public String getHcQRCode(Integer hc_id) throws IOException {
+        Hc hc = this.getById(hc_id);
         Integer hctype_id = hc.getHctype_id();
         QueryWrapper<Hctype> hctypeQueryWrapper = new QueryWrapper<>();
         hctypeQueryWrapper.eq("hctype_id",hctype_id);
@@ -69,16 +64,12 @@ public class HcServiceImpl extends ServiceImpl<HcMapper, Hc>
         map.put("入库时间",hc.getCreateTime());
         String mapStr = map.toString();
         // 生成二维码图片
-        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
-        String originalFilename = generate.getName();
+        File file = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
+        String originalFilename = file.getName();
         //在oss中存储名字就是UUID + 文件的后缀名
         String objectName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        byte[] bytes = generate.toString().getBytes();
         // 调用阿里云服务（生成图片url）
-        return aliOssUtil.upload(bytes, originalFilename);
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        return aliOssUtil.upload(bytes, file.getName());
     }
 }
-
-
-
-

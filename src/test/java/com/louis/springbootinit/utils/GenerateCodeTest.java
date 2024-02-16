@@ -11,9 +11,10 @@ import com.louis.springbootinit.service.HcService;
 import com.louis.springbootinit.service.HctypeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class GenerateCodeTest {
         QrCodeUtil.generate(token, 300, 300, FileUtil.file("d:/qrcode.jpg"));
     }
     @Test
-    public void getHcQRCode() {
+    public void getHcQRCode() throws IOException {
         Hc hc = hcService.getById(6);
         Integer hctype_id = hc.getHctype_id();
         QueryWrapper<Hctype> hctypeQueryWrapper = new QueryWrapper<>();
@@ -63,12 +64,12 @@ public class GenerateCodeTest {
         map.put("入库时间",hc.getCreateTime());
         String mapStr = map.toString();
         // 生成二维码图片
-        File generate = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
-        String originalFilename = generate.getName();
+        File file = QrCodeUtil.generate(mapStr, 300, 300, FileUtil.file("d:/Hc"+hc.getHc_id().toString() +".jpg"));
+        String originalFilename = file.getName();
         //在oss中存储名字就是UUID + 文件的后缀名
         String objectName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        byte[] bytes = generate.toString().getBytes();
+        byte[] bytes = Files.readAllBytes(file.toPath());
         // 调用阿里云服务（生成图片url）
-        System.out.println("这是字符串化后的map键值对"+aliOssUtil.upload(bytes, originalFilename));
+        System.out.println(aliOssUtil.upload(bytes, file.getName()));
     }
 }

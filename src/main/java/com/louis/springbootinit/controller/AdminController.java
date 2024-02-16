@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -425,7 +426,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/getHcQRCode/{hc_id}")
-    public BaseResponse<String> getHcQRCode(@PathVariable Integer hc_id){
+    public BaseResponse<String> getHcQRCode(@PathVariable Integer hc_id) throws IOException {
         ThrowUtils.throwIf(hc_id == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
         String hcQRCodeUrl = hcService.getHcQRCode(hc_id);
         return ResultUtils.success(hcQRCodeUrl);
