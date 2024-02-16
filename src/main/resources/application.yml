@@ -51,7 +51,10 @@ server:
     # cookie 30 天过期
     session:
       cookie:
-        max-age: 2592000
+        domain: localhost
+        same-site: none
+        http-only: true
+        secure: true
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
