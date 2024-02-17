@@ -20,7 +20,7 @@
             <result property="ib_content" column="ib_content" jdbcType="VARCHAR"/>
             <result property="ib_purpose" column="ib_purpose" jdbcType="VARCHAR"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updataTime" column="updataTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updataTime" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
@@ -30,6 +30,6 @@
         user_id,hctype_id,ib_time,
         ib_nums,ib_quantity,wh_remnant,
         ib_content,ib_purpose,createTime,
-        updataTime,isDelete
+        updateTime,isDelete
     </sql>
 </mapper>

@@ -17,6 +17,7 @@ import com.louis.springbootinit.model.dto.admin.AdminLoginRequest;
 import com.louis.springbootinit.model.dto.admin.AdminUpdateMyRequest;
 import com.louis.springbootinit.model.dto.user.UserBaseInfoRequest;
 import com.louis.springbootinit.model.entity.*;
+import com.louis.springbootinit.model.enums.IbTypeEnum;
 import com.louis.springbootinit.model.vo.*;
 import com.louis.springbootinit.service.*;
 import io.swagger.annotations.ApiOperation;
@@ -237,15 +238,27 @@ public class AdminController {
         Integer whstart_id = ibRecordRequest.getWhstart_id();
         Integer whend_id = ibRecordRequest.getWhend_id();
         Wh whend = whService.getById(whend_id);
-        Wh whstart = whService.getById(whstart_id);
-        String whstart_name = whstart.getWh_name();
         String whend_name = whend.getWh_name();
-        // 校验参数
-        if(StringUtils.isAnyBlank(adminb_id.toString(),admina_id.toString(), teacher_id.toString(),user_id.toString(),
-                ib_content,whstart_name,whend_name,ib_purpose,ib_content)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+        IbBaseRecordVO b = null;
+        if(!(whstart_id == null)){
+            // 采购入库（起始仓库允许为空）
+            Wh whstart = whService.getById(whstart_id);
+            String whstart_name = whstart.getWh_name();
+
+            // 校验参数
+            if(StringUtils.isAnyBlank(adminb_id.toString(),admina_id.toString(), teacher_id.toString(),user_id.toString(),
+                    ib_content,whstart_name,whend_name,ib_purpose,ib_content)){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+            }
+             b = ibService.addIbRecords(ibRecordRequest);
+        }else{
+            if(StringUtils.isAnyBlank(adminb_id.toString(),admina_id.toString(), teacher_id.toString(),user_id.toString(),
+                    ib_content,whend_name,ib_purpose,ib_content)){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数不能为空");
+            }
+            // 采购第一次入库无需校验入库参数
+            b = ibService.addIbRecords(ibRecordRequest);
         }
-        IbBaseRecordVO b = ibService.addIbRecords(ibRecordRequest);
         return ResultUtils.success(b);
     }
 
@@ -342,10 +355,12 @@ public class AdminController {
     /**
      * 获取危化品类型信息
      * @param hc_name
+     * @RequestParam 只能接受字符串
+     * @PathVariable 接受数字
      * @return
      */
-    @GetMapping("/getHcTypeInfo/{hc_name}")
-    public BaseResponse<List<HcTypeInfoVO>> getHcTypeInfo(@PathVariable String hc_name){
+    @GetMapping("/getHcTypeInfo")
+    public BaseResponse<List<HcTypeInfoVO>> getHcTypeInfo(@RequestParam String hc_name){
         ThrowUtils.throwIf(hc_name == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
         List<HcTypeInfoVO> hcTypesInfo = hctypeService.getHcTypeInfo(hc_name);
         return ResultUtils.success(hcTypesInfo);

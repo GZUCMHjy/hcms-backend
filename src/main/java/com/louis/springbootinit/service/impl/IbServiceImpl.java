@@ -95,6 +95,9 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
         ib.setTeacher_id(teacher_id);
         ib.setAdmina_id(admina_id);
         ib.setAdminb_id(adminb_id);
+        if(ibRecordRequest.getWhstart_id() == null){
+            ib.setWhstart_id(-1);
+        }
         ib.setWhstart_id(ibRecordRequest.getWhstart_id());
         ib.setWhend_id(ibRecordRequest.getWhend_id());
         ib.setHctype_id(ibRecordRequest.getHctype_id());
