@@ -440,8 +440,8 @@ public class AdminController {
      * @param hc_id
      * @return
      */
-    @GetMapping("/getHcQRCode/{hc_id}")
-    public BaseResponse<String> getHcQRCode(@PathVariable Integer hc_id) throws IOException {
+    @GetMapping("/getHcQRCode")
+    public BaseResponse<String> getHcQRCode(@RequestParam Integer hc_id) throws IOException {
         ThrowUtils.throwIf(hc_id == null, ErrorCode.PARAMS_ERROR,"参数不能为空");
         String hcQRCodeUrl = hcService.getHcQRCode(hc_id);
         return ResultUtils.success(hcQRCodeUrl);

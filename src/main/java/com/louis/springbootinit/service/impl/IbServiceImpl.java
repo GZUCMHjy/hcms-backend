@@ -234,6 +234,7 @@ public class IbServiceImpl extends ServiceImpl<IbMapper, Ib>
             hcListVO.setProductiondate(hc.getProducationdate());
             hcListVO.setShelflife(hc.getShelflife());
             hcListVO.setIb_time(byId.getIb_time());
+            hcListVO.setPrice(hc.getPrice());
             hcListVOS.add(hcListVO);
         }
         ibRecordVO.setList(hcListVOS);

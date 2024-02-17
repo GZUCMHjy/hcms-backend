@@ -78,8 +78,7 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
         boolean isSuccess = ibService.updateById(byId);
         ThrowUtils.throwIf(!isSuccess, ErrorCode.SYSTEM_ERROR,"更新入库记录表数据异常");
         // 获取批量入库的危化品类型
-        Integer hctype_id = hcIbRecordAddRequest.getHctype_id();
-        Hctype hcType = hctypeService.getById(hctype_id);
+        Hctype hcType = hctypeService.getById(byId.getHctype_id());
         // 添加危化品表
         for (int i = 0 ; i < batch ; i++){
             // 实例化hc表
@@ -101,7 +100,7 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
             // cas编号
             hc.setCas(hcType.getCas());
             // 危化品类型id
-            hc.setHctype_id(hcIbRecordAddRequest.getHctype_id());
+            hc.setHctype_id(byId.getHctype_id());
             // 保质期
             hc.setShelflife(hcIbRecordAddRequest.getShelflife());
             // 采购编号
@@ -130,7 +129,7 @@ public class HcibServiceImpl extends ServiceImpl<HcibMapper, Hcib>
         List<Hcib> hcibList = new ArrayList<>(batch);
         for(int hc_id = startIndex ; hc_id <= endIndex; hc_id++){
             Hcib hcib = new Hcib();
-            hcib.setHctype_id(hcIbRecordAddRequest.getHctype_id());
+            hcib.setHctype_id(hcType.getHctype_id());
             hcib.setIb_id(ib_id);
             hcib.setHc_id(hc_id);
             hcibList.add(hcib);
