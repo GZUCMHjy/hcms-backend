@@ -90,6 +90,11 @@ public class Ob implements Serializable {
     private String ob_purpose;
 
     /**
+     * 出库申请id，可为空
+     */
+    private Integer apply_id;
+
+    /**
      * 记录创建时间
      * 自动填充（添加时自动填充创建时间）
      */

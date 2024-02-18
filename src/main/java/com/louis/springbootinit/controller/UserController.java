@@ -83,22 +83,21 @@ public class UserController {
      */
     @PostMapping("/register")
     @ApiOperation(value = "用户注册",notes = "用户注册")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+    public BaseResponse<Boolean> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String user_name = userRegisterRequest.getUser_name();
         String user_pwd = userRegisterRequest.getUser_pwd();
-        String wh_name = userRegisterRequest.getWh_name();
-        String user_institution = userRegisterRequest.getUser_institution();
         String user_tel = userRegisterRequest.getUser_tel();
+        Integer lab_id = userRegisterRequest.getLab_id();
         String user_gender = userRegisterRequest.getUser_gender();
         // 校验判空
-        if (StringUtils.isAnyBlank(user_pwd, wh_name,user_institution,user_tel,user_name)) {
+        if (StringUtils.isAnyBlank(user_pwd, lab_id.toString(),user_tel,user_name)) {
             return null;
         }
-        long result = userService.userRegister(user_pwd,wh_name,user_institution,user_tel,user_gender,user_name);
-        return ResultUtils.success(result);
+        long result = userService.userRegister(user_pwd,lab_id,user_tel,user_gender,user_name);
+        return ResultUtils.success(true);
     }
 
     /**

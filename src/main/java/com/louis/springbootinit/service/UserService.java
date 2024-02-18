@@ -14,7 +14,7 @@ import java.util.List;
 */
 public interface UserService extends IService<User> {
 
-    long userRegister(String userPassword, String checkPassword,String user_institution,String user_tel,String user_gender,String user_name);
+    long userRegister(String userPassword, Integer lab_id,String user_tel,String user_gender,String user_name);
 
     LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
 

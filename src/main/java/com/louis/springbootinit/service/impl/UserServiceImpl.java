@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
 import com.louis.springbootinit.mapper.UserMapper;
+import com.louis.springbootinit.model.entity.Lab;
 import com.louis.springbootinit.model.entity.User;
 import com.louis.springbootinit.model.entity.Wh;
 import com.louis.springbootinit.model.enums.LoginStatusEnum;
 import com.louis.springbootinit.model.vo.LoginUserVO;
+import com.louis.springbootinit.service.LabService;
 import com.louis.springbootinit.service.UserService;
 import com.louis.springbootinit.service.WhService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private WhService whService;
 
+    @Resource
+    private LabService labService;
+
 
     /**
      * 盐值，混淆密码
@@ -44,9 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "hcms";
 
     @Override
-    public long userRegister(String user_pwd, String wh_name,String user_institution,String user_tel,String user_gender,String user_name) {
+    public long userRegister(String user_pwd, Integer lab_id,String user_tel,String user_gender,String user_name) {
         // 1. 校验
-        if (StringUtils.isAnyBlank(user_pwd, wh_name,user_tel,user_institution,user_name)) {
+        if (StringUtils.isAnyBlank(user_pwd, user_tel,lab_id.toString(),user_name)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if(user_tel.length() != 11){
@@ -66,9 +71,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             if (count > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
-            QueryWrapper<Wh> whQueryWrapper = new QueryWrapper<Wh>();
-            whQueryWrapper.eq("wh_name",wh_name);
-            Wh one = whService.getOne(whQueryWrapper);
+            QueryWrapper<Lab> whQueryWrapper = new QueryWrapper<>();
+            whQueryWrapper.eq("lab_id",lab_id);
+            Lab one = labService.getOne(whQueryWrapper);
             if(one == null){
                 throw new BusinessException(ErrorCode.PARAMS_ERROR,"查无实验室");
             }
@@ -76,12 +81,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + user_pwd).getBytes());
             // 3. 插入数据
             User user = new User();
-            user.setUser_institution(user_institution);
+            user.setLab_id(lab_id);
             user.setUser_name(user_name);
             user.setUser_gender(user_gender);
             user.setUser_tel(user_tel);
             user.setUser_acct(user_tel);
-            user.setLab_id(one.getWh_id());
             user.setUser_pwd(encryptPassword);
             boolean saveResult = this.save(user);
             if (!saveResult) {
