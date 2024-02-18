@@ -172,15 +172,13 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
-        User user = new User();
-        BeanUtils.copyProperties(userUpdateMyRequest, user);
-        String lab_name = userUpdateMyRequest.getLab_name();
-        QueryWrapper<Lab> labQueryWrapper = new QueryWrapper<>();
-        labQueryWrapper.eq("lab_name",lab_name);
-        Integer lab_id = labService.getOne(labQueryWrapper).getLab_id();
-        user.setUser_id(loginUser.getUser_id());
-        user.setLab_id(lab_id);
-        boolean result = userService.updateById(user);
+        loginUser.setUser_name(userUpdateMyRequest.getUser_name());
+        loginUser.setUser_gender(userUpdateMyRequest.getUser_gender());
+        loginUser.setUser_tel(userUpdateMyRequest.getUser_tel());
+        loginUser.setLab_id(userUpdateMyRequest.getLab_id());
+        loginUser.setUser_institution(userUpdateMyRequest.getUser_institution());
+        loginUser.setUser_position(userUpdateMyRequest.getUser_position());
+        boolean result = userService.updateById(loginUser);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

@@ -30,11 +30,6 @@ public class UserUpdateMyRequest implements Serializable {
     private String user_tel;
 
     /**
-     * 用户密码
-     */
-    private String user_pwd;
-
-    /**
      * 用户性别
      */
     private String user_gender;
@@ -42,7 +37,7 @@ public class UserUpdateMyRequest implements Serializable {
     /**
      * 实验室名
      */
-    private String lab_name;
+    private Integer lab_id;
 
     /**
      * 用户职位
