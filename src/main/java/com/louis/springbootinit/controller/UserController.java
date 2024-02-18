@@ -26,6 +26,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.louis.springbootinit.model.vo.UserInfoVO;
 import com.louis.springbootinit.service.LabService;
 import com.louis.springbootinit.service.PurService;
 import com.louis.springbootinit.service.UserService;
@@ -156,6 +157,14 @@ public class UserController {
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
+    }
+    @GetMapping("/getUserInfo")
+    @ApiOperation(value = "获取当前登录用户详细",notes = "用户详细")
+    public BaseResponse<UserInfoVO> getUserInfo(HttpServletRequest request) {
+        User user = userService.getLoginUser(request);
+        UserInfoVO userInfoVO = new UserInfoVO();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return ResultUtils.success(userInfoVO);
     }
     /**
      * 更新个人信息
