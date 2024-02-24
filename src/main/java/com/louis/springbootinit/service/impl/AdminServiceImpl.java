@@ -4,21 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.louis.springbootinit.common.ErrorCode;
 import com.louis.springbootinit.exception.BusinessException;
+import com.louis.springbootinit.mapper.AdminMapper;
 import com.louis.springbootinit.model.entity.Admin;
-import com.louis.springbootinit.model.entity.User;
 import com.louis.springbootinit.model.enums.LoginStatusEnum;
 import com.louis.springbootinit.model.vo.LoginAdminVO;
-import com.louis.springbootinit.model.vo.LoginUserVO;
 import com.louis.springbootinit.service.AdminService;
-import com.louis.springbootinit.mapper.AdminMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 import static com.louis.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
@@ -109,6 +104,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
         }
         LoginAdminVO loginAdminVO = new LoginAdminVO();
         loginAdminVO.setStatus(LoginStatusEnum.LOGIN_SUCCESS.getCode());
+        loginAdminVO.setAccount_id(admin.getAdmin_id());
         return loginAdminVO;
     }
 
