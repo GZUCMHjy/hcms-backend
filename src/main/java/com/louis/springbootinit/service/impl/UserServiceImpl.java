@@ -166,6 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         LoginUserVO loginUserVO = new LoginUserVO();
         // BeanUtils.copyProperties(user, loginUserVO);
         loginUserVO.setStatus(LoginStatusEnum.LOGIN_SUCCESS.getCode());
+        loginUserVO.setAccount_id(user.getUser_id());
         return loginUserVO;
     }
 

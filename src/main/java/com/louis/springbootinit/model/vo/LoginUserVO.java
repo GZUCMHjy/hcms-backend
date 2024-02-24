@@ -1,8 +1,8 @@
 package com.louis.springbootinit.model.vo;
 
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 已登录用户视图（脱敏）
@@ -21,6 +21,8 @@ public class LoginUserVO implements Serializable {
      * 1 登录成功
      */
     private Integer status;
+
+    private Integer account_id;
 
     private static final long serialVersionUID = 1L;
 }

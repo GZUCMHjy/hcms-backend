@@ -30,7 +30,7 @@ public class UserInfoVO implements Serializable {
     /**
      * 普通用户管理仓库id,外键
      */
-    private Integer wh_id;
+    private Integer lab_id;
 
     /**
      * 普通用户职位

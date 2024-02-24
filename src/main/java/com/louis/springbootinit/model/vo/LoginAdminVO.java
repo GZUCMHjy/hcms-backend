@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class LoginAdminVO implements Serializable {
 
     Integer status;
-
+    Integer account_id;
 
     private static final long serialVersionUID = 1L;
 }
